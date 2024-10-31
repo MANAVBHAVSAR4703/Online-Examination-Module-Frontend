@@ -13,10 +13,10 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import Cookies from "js-cookie";
 import axios from "axios";
-import api from '../Constants/Api.js'
+import api from "../Constants/Api.js";
 import { SitemarkIcon } from "../Utils/CustomIcons.js";
 import ColorModeSelect from "../Theme/ColorModeSelect.js";
-import { setUser } from "../reducers/authSlice.js"; 
+import { setUser } from "../reducers/authSlice.js";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -82,13 +82,10 @@ export default function SignIn(props) {
     if (!validateInputs()) return;
 
     try {
-      const response = await axios.post(
-        `${api.Login}`,
-        { email, password }
-      );
-      const { token, data, success, message } = response.data;
+      const response = await axios.post(`${api.Login}`, { email, password });
+      const { token, success, message } = response.data;
       if (success) {
-        dispatch(setUser(data));
+        dispatch(setUser(response.data));
         Cookies.set("token", token);
         setMessage("");
         navigate("/dashboard");
