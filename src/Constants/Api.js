@@ -12,6 +12,8 @@ const api = {
   GetOverview: backend_url + "/api/admin/getOverview",
   GetEnrolledExams: backend_url + "/api/student/getExams",
   GetExamById: backend_url + "/api/student/getExamById",
+  SubmitExam:backend_url+"/api/student/submitExam",
+  getExamResults:backend_url+"/api/admin/completed-exams"
 };
 
 export default api;

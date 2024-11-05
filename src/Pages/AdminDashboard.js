@@ -13,6 +13,8 @@ import AddQuestion from "./AddQuestion";
 import ViewExams from "./ViewExams";
 import ExamDetails from "./ExamDetails";
 import ViewQuestions from "./ViewQuestions";
+import ViewResultsPage from "./ViewResultsPage";
+import ExamResultPage from "./ExamResultPage";
 
 function AdminDashboard({ user }) {
   return (
@@ -50,6 +52,8 @@ function AdminDashboard({ user }) {
               path='/view-exams/:exam-title'
               element={<ExamDetails />}
             />
+            <Route exact path='/exam-results' element={<ViewResultsPage />} />
+            <Route exact path='/exam-results/:examId' element={<ExamResultPage />} />
             <Route exact path='/view-questions' element={<ViewQuestions />} />
             <Route exact path='/403' element={<NoPage />} />
           </Routes>

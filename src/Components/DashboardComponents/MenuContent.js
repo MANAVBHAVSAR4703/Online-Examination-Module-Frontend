@@ -45,6 +45,11 @@ const mainListItems = [
     icon: <AssignmentRoundedIcon />,
     naviagteLink: "/dashboard/view-questions",
   },
+  {
+    text: "View Results",
+    icon: <AssignmentRoundedIcon />,
+    naviagteLink: "/dashboard/exam-results",
+  },
 ];
 
 const secondaryListItems = [
