@@ -12,8 +12,11 @@ const api = {
   GetOverview: backend_url + "/api/admin/getOverview",
   GetEnrolledExams: backend_url + "/api/student/getExams",
   GetExamById: backend_url + "/api/student/getExamById",
-  SubmitExam:backend_url+"/api/student/submitExam",
-  getExamResults:backend_url+"/api/admin/completed-exams"
+  SubmitExam: backend_url + "/api/student/submitExam",
+  getExamResults: backend_url + "/api/admin/completed-exams",
+  editStudent: backend_url + "/api/admin/editStudent",
+  deleteStudent: backend_url + "/api/admin/deleteStudent",
+  deleteQuestion: backend_url + "/api/admin/deleteQuestion",
 };
 
 export default api;

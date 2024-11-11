@@ -47,6 +47,8 @@ function AdminDashboard({ user }) {
             <Route exact path='/add-question' element={<AddQuestion />} />
             <Route exact path='/view-students' element={<ViewStudents />} />
             <Route exact path='/view-exams' element={<ViewExams />} />
+            <Route exact path='/edit-student' element={<CreateStudent />} />
+            <Route exact path='/edit-question' element={<AddQuestion />} />
             <Route
               exact
               path='/view-exams/:exam-title'

@@ -16,17 +16,26 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import api from "../Constants/Api";
 import Cookies from "js-cookie";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function AddQuestion() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { question } = location.state || {};
+  console.log(question);
   const token = Cookies.get("token");
   if (!token) {
     throw new Error("JWT token not found in cookie");
   }
   let AuthStr = `Bearer ${token}`;
-  const [questionText, setQuestionText] = useState("");
-  const [category, setCategory] = useState("Logical");
-  const [options, setOptions] = useState(["", ""]);
-  const [correctOptionIndex, setCorrectOptionIndex] = useState(null);
+  const [questionText, setQuestionText] = useState(question?.text ?? "");
+  const [category, setCategory] = useState(question?.category ?? "Logical");
+  const [options, setOptions] = useState(
+    question?.options?.map((option) => option.text) ?? ["", ""]
+  );
+  const [correctOptionIndex, setCorrectOptionIndex] = useState(
+    question?.correctOptionIndex ?? null
+  );
 
   const handleAddOption = () => {
     if (options.length < 4) {
@@ -45,7 +54,6 @@ function AddQuestion() {
   const handleRemoveOption = (index) => {
     const updatedOptions = options.filter((_, i) => i !== index);
     setOptions(updatedOptions);
-    // If the correct option index is being removed, reset it
     if (correctOptionIndex === index) {
       setCorrectOptionIndex(null);
     }
@@ -74,29 +82,52 @@ function AddQuestion() {
       return;
     }
 
-    const questionData = {
-      text: questionText,
-      category,
-      correctOptionIndex,
-      options,
-    };
+    const questionData = question
+      ? {
+          id: question.id,
+          text: questionText,
+          category,
+          correctOptionIndex,
+          options: options.map((optionText, index) => ({
+            id: question.options[index]?.id,
+            text: optionText,
+          })),
+        }
+      : {
+          text: questionText,
+          category,
+          correctOptionIndex,
+          options,
+        };
 
     try {
-      const response = await axios.post(api.AddQuestion, questionData, {
-        headers: {
-          Authorization: AuthStr,
-        },
-      });
+      const response = await axios.post(
+        question ? api.editQuestion : api.AddQuestion,
+        questionData,
+        {
+          headers: {
+            Authorization: AuthStr,
+          },
+        }
+      );
+
       if (response.data.success) {
         toast.success(response?.data?.message);
+        setTimeout(() => {
+          navigate("/dashboard/view-questions");
+        }, 1000);
         setQuestionText("");
         setOptions(["", ""]);
         setCorrectOptionIndex(null);
       } else {
-        toast.error(response?.data?.message || "Failed to Add Question");
+        if (question) {
+          toast.error(response?.data?.message || "Failed to Edit Question");
+        } else {
+          toast.error(response?.data?.message || "Failed to Add Question");
+        }
       }
     } catch (error) {
-      console.error("Error adding question:", error);
+      console.error("Error adding/editing question:", error);
       toast.error(error?.response?.data?.message || "An Error Occurred!");
     }
   };
@@ -104,7 +135,7 @@ function AddQuestion() {
   return (
     <Card variant='outlined' style={{ padding: "2%", width: "60%" }}>
       <Typography variant='h4' gutterBottom>
-        Add Question
+        {question ? "Edit Question" : "Add Question"}
       </Typography>
       <Box component='form' onSubmit={handleSubmit} noValidate>
         <FormControl fullWidth margin='normal'>
@@ -195,11 +226,9 @@ function AddQuestion() {
             ))}
           </RadioGroup>
         </FormControl>
-
         <Button type='submit' variant='contained' color='primary' fullWidth>
-          Submit Question
+          {question ? "Edit Question" : "Submit Question"}
         </Button>
-
         <ToastContainer />
       </Box>
     </Card>

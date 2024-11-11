@@ -11,22 +11,25 @@ import {
 } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { SitemarkIcon } from "../Utils/CustomIcons";
 import axios from "axios";
 import api from "../Constants/Api";
 import Cookies from "js-cookie";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function CreateStudent() {
   const token = Cookies.get("token");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { student } = location.state || {};
   if (!token) {
     throw new Error("JWT token not found in cookie");
   }
   let AuthStr = `Bearer ${token}`;
-  const [email, setEmail] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [password, setPassword] = useState("");
-  const [enrollNo, setEnrollNo] = useState("");
-  const [college, setCollege] = useState("");
+  const [email, setEmail] = useState(student?.email ?? "");
+  const [fullName, setFullName] = useState(student?.fullName ?? "");
+  const [password, setPassword] = useState(student?.password ?? "");
+  const [enrollNo, setEnrollNo] = useState(student?.enrollNo ?? "");
+  const [college, setCollege] = useState(student?.college ?? "");
 
   const [emailError, setEmailError] = useState("");
   const [fullNameError, setFullNameError] = useState("");
@@ -91,20 +94,33 @@ function CreateStudent() {
     };
 
     try {
-      const response = await axios.post(api.CreateStudent, studentData, {
-        headers: {
-          Authorization: AuthStr,
-        },
-      });
+      const response = await axios.post(
+        student ? api.editStudent : api.CreateStudent,
+        studentData,
+        {
+          headers: {
+            Authorization: AuthStr,
+          },
+        }
+      );
       if (response.data.success) {
         toast.success(response?.data?.message);
+        if (student) {
+          setTimeout(() => {
+            navigate("/dashboard/view-students");
+          }, 1000);
+        }
         setEmail("");
         setFullName("");
         setPassword("");
         setEnrollNo("");
         setCollege("");
       } else {
-        toast.error(response?.data?.message || "Failed to Create Student");
+        if (student) {
+          toast.error(response?.data?.message || "Failed to Edit Student");
+        } else {
+          toast.error(response?.data?.message || "Failed to Create Student");
+        }
       }
     } catch (error) {
       console.error("Error creating student:", error);
@@ -118,9 +134,8 @@ function CreateStudent() {
         component='h1'
         variant='h4'
         sx={{ fontSize: "clamp(2rem, 10vw, 2.15rem)" }}>
-        Create Student
+        {student ? "Edit Student" : "Create Student"}
       </Typography>
-      {/* {message && <Typography color='error'>{message}</Typography>} */}
       <Box
         component='form'
         onSubmit={handleSubmit}
@@ -132,6 +147,7 @@ function CreateStudent() {
             id='email'
             type='email'
             name='email'
+            disabled={student ? true : false}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={!!emailError}
@@ -211,9 +227,8 @@ function CreateStudent() {
         </FormControl>
 
         <Button type='submit' fullWidth variant='contained'>
-          Create Student
+          {student ? "Edit Student" : "Create Student"}
         </Button>
-
         <ToastContainer />
       </Box>
     </Card>

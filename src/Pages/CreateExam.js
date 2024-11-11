@@ -14,9 +14,13 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import api from "../Constants/Api";
 import Cookies from "js-cookie";
+import { useLocation } from "react-router-dom";
 
 function CreateExam() {
   const token = Cookies.get("token");
+  const location=useLocation();
+  const { exam } = location.state || {};
+
   if (!token) {
     throw new Error("JWT token not found in cookie");
   }
