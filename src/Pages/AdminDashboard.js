@@ -1,6 +1,6 @@
 import { alpha, Box, Stack } from "@mui/material";
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import AppNavbar from "../Components/DashboardComponents/AppNavbar";
 import SideMenu from "../Components/DashboardComponents/SideMenu";
 import Header from "../Components/DashboardComponents/Header";
@@ -15,13 +15,17 @@ import ExamDetails from "./ExamDetails";
 import ViewQuestions from "./ViewQuestions";
 import ViewResultsPage from "./ViewResultsPage";
 import ExamResultPage from "./ExamResultPage";
+import Profile from "./Profile";
 
+function RedirectTo403() {
+  const navigate = useNavigate();
+  navigate("/403");
+}
 function AdminDashboard({ user }) {
   return (
     <Box sx={{ display: "flex" }}>
       <SideMenu user={user} />
       <AppNavbar />
-      {/* Main content */}
       <Box
         component='main'
         sx={(theme) => ({
@@ -49,15 +53,22 @@ function AdminDashboard({ user }) {
             <Route exact path='/view-exams' element={<ViewExams />} />
             <Route exact path='/edit-student' element={<CreateStudent />} />
             <Route exact path='/edit-question' element={<AddQuestion />} />
+            <Route exact path='/edit-exam' element={<CreateExam />} />
+            <Route exact path='/profile' element={<Profile />} />
             <Route
               exact
               path='/view-exams/:exam-title'
               element={<ExamDetails />}
             />
             <Route exact path='/exam-results' element={<ViewResultsPage />} />
-            <Route exact path='/exam-results/:examId' element={<ExamResultPage />} />
+            <Route
+              exact
+              path='/exam-results/:examId'
+              element={<ExamResultPage />}
+            />
             <Route exact path='/view-questions' element={<ViewQuestions />} />
             <Route exact path='/403' element={<NoPage />} />
+            <Route exact path='/*' element={<RedirectTo403 />} />
           </Routes>
         </Stack>
       </Box>

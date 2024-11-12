@@ -1,28 +1,24 @@
-import { Paper } from "@mui/material";
-import React from "react";
-import { Delete, EditNoteRounded } from "@mui/icons-material";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import * as React from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import Paper from "@mui/material/Paper";
+import { Delete, EditNote } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import api from "../Constants/Api";
 import { toast, ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 import axios from "axios";
+import api from "../Constants/Api";
+import { Box, IconButton, Tooltip } from "@mui/material";
 
-function StudentViewComponent({ students }) {
+export default function StudentViewComponent({ students }) {
   const token = Cookies.get("token");
   if (!token) {
     throw new Error("JWT token not found in cookie");
   }
-  let AuthStr = `Bearer ${token}`;
+  const AuthStr = `Bearer ${token}`;
   const navigate = useNavigate();
+  
+  const [studentList, setStudentList] = React.useState(students);
+
   const deleteStudent = async (studentData) => {
     try {
       const response = await axios.post(api.deleteStudent, studentData, {
@@ -32,61 +28,68 @@ function StudentViewComponent({ students }) {
       });
       if (response.data.success) {
         toast.success(response?.data?.message);
+        setStudentList((prevStudents) =>
+          prevStudents.filter((student) => student.email !== studentData.email)
+        );
       } else {
         toast.error(response?.data?.message || "Failed to Delete Student");
       }
     } catch (error) {
       console.error("Error deleting student:", error);
-      toast.error(error?.response?.data?.message || "An Error Occured !");
+      toast.error(error?.response?.data?.message || "An Error Occurred!");
     }
   };
+
+  const columns = [
+    { field: "email", headerName: "Email", width: 350 },
+    { field: "fullName", headerName: "Full Name", width: 200 },
+    { field: "enrollNo", headerName: "Enrollment Number", width: 200 },
+    { field: "college", headerName: "College", width: 250 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 100,
+      sortable: false,
+      renderCell: (params) => (
+        <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+          <Box display="flex" alignItems="center">
+            <Tooltip title="Edit Student">
+              <IconButton
+                onClick={() =>
+                  navigate("/dashboard/edit-student", {
+                    state: { student: params.row },
+                  })
+                }
+              >
+                <EditNote color="info" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete Student">
+              <IconButton onClick={() => deleteStudent(params.row)}>
+                <Delete color="error" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </div>
+      ),
+    },
+  ];
+
+  const paginationModel = { page: 0, pageSize: 10 };
+
   return (
-    <Paper elevation={3} sx={{ padding: 3, margin: "20px auto", width: "80%" }}>
+    <Paper sx={{ width: "100%" }}>
       <ToastContainer />
-      <Typography variant='h4' component='h2' align='center' gutterBottom>
-        Student Information
-      </Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Email</TableCell>
-              <TableCell>Full Name</TableCell>
-              <TableCell>Enrollment Number</TableCell>
-              <TableCell>College</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {students?.map((student) => (
-              <TableRow key={student?.email}>
-                <TableCell>{student?.email}</TableCell>
-                <TableCell>{student?.fullName}</TableCell>
-                <TableCell>{student?.enrollNo}</TableCell>
-                <TableCell>{student?.college}</TableCell>
-                <TableCell sx={{ display: "flex" }}>
-                  <div
-                    style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      navigate("/dashboard/edit-student", {
-                        state: { student },
-                      })
-                    }>
-                    <EditNoteRounded />
-                  </div>
-                  <div
-                    style={{ cursor: "pointer" }}
-                    onClick={() => deleteStudent(student)}>
-                    <Delete />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <DataGrid
+        rows={studentList}
+        columns={columns}
+        initialState={{ pagination: { paginationModel } }}
+        pageSizeOptions={[5, 10, 20]}
+        checkboxSelection
+        disableSelectionOnClick
+        getRowId={(row) => row.email}
+        sx={{ border: 0 }}
+      />
     </Paper>
   );
 }
-
-export default StudentViewComponent;

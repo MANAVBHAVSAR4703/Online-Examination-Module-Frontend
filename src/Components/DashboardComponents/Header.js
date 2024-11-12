@@ -6,6 +6,7 @@ import MenuButton from "./MenuButton";
 import ColorModeIconDropdown from "./ColorModeIconDropdown";
 
 import Search from "./Search";
+import ColorModeSelect from "../../Theme/ColorModeSelect";
 
 export default function Header() {
   return (
@@ -23,11 +24,7 @@ export default function Header() {
       <NavbarBreadcrumbs />
       <Stack direction='row' sx={{ gap: 1 }}>
         <Search />
-        {/* <CustomDatePicker /> */}
-        <MenuButton showBadge aria-label='Open notifications'>
-          <NotificationsRoundedIcon />
-        </MenuButton>
-        <ColorModeIconDropdown />
+        <ColorModeSelect/>
       </Stack>
     </Stack>
   );

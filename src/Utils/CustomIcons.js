@@ -1,9 +1,15 @@
 import * as React from "react";
 import SvgIcon from "@mui/material/SvgIcon";
+import { useTheme } from "@mui/material";
 
 export function SitemarkIcon() {
+  const theme = useTheme();
   return (
-    <SvgIcon sx={{ height: 21, width: 100 }}>
+    <SvgIcon
+      sx={{
+        height: 21,
+        width: 100,
+      }}>
       <svg
         xmlns='http://www.w3.org/2000/svg'
         version='1.0'
@@ -13,7 +19,7 @@ export function SitemarkIcon() {
         preserveAspectRatio='xMidYMid meet'>
         <g
           transform='translate(0.000000,94.000000) scale(0.100000,-0.100000)'
-          fill='#000000'
+          fill={theme?.palette?.mode === "dark" ? "white" : "black"}
           stroke='none'>
           <path d='M16 909 c-14 -21 -16 -75 -16 -455 0 -482 -4 -458 72 -452 l43 3 3 119 3 118 69 -4 c60 -3 74 -8 97 -31 25 -24 28 -36 33 -114 l5 -88 43 -3 c62 -5 72 8 72 88 0 74 -20 152 -46 181 -16 18 -16 22 12 72 l29 52 0 190 c0 184 -1 191 -25 235 -14 24 -44 58 -68 75 -43 29 -47 30 -177 33 -129 3 -133 3 -149 -19z m255 -109 c40 -22 49 -61 49 -215 0 -203 -13 -225 -134 -225 l-66 0 0 225 0 225 66 0 c36 0 74 -5 85 -10z' />
           <path d='M632 904 c-41 -20 -59 -37 -82 -78 l-30 -51 0 -305 c0 -274 2 -309 19 -345 61 -135 240 -167 345 -61 61 61 66 89 66 409 0 222 -3 283 -15 318 -43 122 -182 174 -303 113z m169 -113 l24 -19 3 -288 c2 -195 -1 -296 -8 -315 -23 -55 -101 -65 -152 -20 l-33 29 -3 249 c-4 288 -1 322 35 357 32 33 98 36 134 7z' />

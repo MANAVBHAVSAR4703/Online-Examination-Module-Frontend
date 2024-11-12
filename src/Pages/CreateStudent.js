@@ -5,9 +5,9 @@ import {
   FormControl,
   FormLabel,
   TextField,
-  Link,
   Typography,
   Card,
+  Grid,
 } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -54,7 +54,7 @@ function CreateStudent() {
       setFullNameError("");
     }
 
-    if (!password || password.length < 4) {
+    if (!password || password.length < 6) {
       setPasswordError("Password must be at least 6 characters");
       isValid = false;
     } else {
@@ -116,117 +116,134 @@ function CreateStudent() {
         setEnrollNo("");
         setCollege("");
       } else {
-        if (student) {
-          toast.error(response?.data?.message || "Failed to Edit Student");
-        } else {
-          toast.error(response?.data?.message || "Failed to Create Student");
-        }
+        toast.error(response?.data?.message || "Failed to process request");
       }
     } catch (error) {
-      console.error("Error creating student:", error);
-      toast.error(error?.response?.data?.message || "An Error Occured !");
+      console.error("Error:", error);
+      toast.error(error?.response?.data?.message || "An Error Occurred!");
     }
   };
 
   return (
-    <Card variant='outlined' style={{ width: "50%", padding: "2%" }}>
+    <Card
+      variant='outlined'
+      sx={{
+        width: { xs: "90%", sm: "75%", md: "60%" },
+        padding: "2rem",
+        margin: "auto",
+        borderRadius: "12px",
+        boxShadow: 3,
+      }}>
       <Typography
         component='h1'
         variant='h4'
-        sx={{ fontSize: "clamp(2rem, 10vw, 2.15rem)" }}>
+        sx={{
+          fontSize: "clamp(2rem, 10vw, 2.15rem)",
+          textAlign: "center",
+          mb: 3,
+          fontFamily: "cursive",
+        }}>
         {student ? "Edit Student" : "Create Student"}
       </Typography>
-      <Box
-        component='form'
-        onSubmit={handleSubmit}
-        noValidate
-        sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <FormControl>
-          <FormLabel htmlFor='email'>Email</FormLabel>
-          <TextField
-            id='email'
-            type='email'
-            name='email'
-            disabled={student ? true : false}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={!!emailError}
-            helperText={emailError}
-            placeholder='your@email.com'
-            autoComplete='email'
-            fullWidth
-            variant='outlined'
-            required
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor='fullName'>Full Name</FormLabel>
-          <TextField
-            id='fullName'
-            name='fullName'
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            error={!!fullNameError}
-            helperText={fullNameError}
-            placeholder='John Doe'
-            fullWidth
-            variant='outlined'
-            required
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor='password'>Password</FormLabel>
-          <TextField
-            id='password'
-            type='password'
-            name='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={!!passwordError}
-            helperText={passwordError}
-            placeholder='••••••'
-            autoComplete='new-password'
-            fullWidth
-            variant='outlined'
-            required
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor='enrollNo'>Enrollment Number</FormLabel>
-          <TextField
-            id='enrollNo'
-            name='enrollNo'
-            value={enrollNo}
-            onChange={(e) => setEnrollNo(e.target.value)}
-            error={!!enrollNoError}
-            helperText={enrollNoError}
-            placeholder='123456'
-            fullWidth
-            variant='outlined'
-            required
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor='college'>College</FormLabel>
-          <TextField
-            id='college'
-            name='college'
-            value={college}
-            onChange={(e) => setCollege(e.target.value)}
-            error={!!collegeError}
-            helperText={collegeError}
-            placeholder='LJ University'
-            fullWidth
-            variant='outlined'
-            required
-          />
-        </FormControl>
-
-        <Button type='submit' fullWidth variant='contained'>
+      <Box component='form' onSubmit={handleSubmit} noValidate>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <FormLabel htmlFor='email'>Email</FormLabel>
+              <TextField
+                id='email'
+                type='email'
+                name='email'
+                disabled={!!student}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={!!emailError}
+                helperText={emailError}
+                placeholder='your@email.com'
+                autoComplete='email'
+                variant='outlined'
+                required
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <FormLabel htmlFor='fullName'>Full Name</FormLabel>
+              <TextField
+                id='fullName'
+                name='fullName'
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                error={!!fullNameError}
+                helperText={fullNameError}
+                placeholder='John Doe'
+                variant='outlined'
+                required
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <FormLabel htmlFor='password'>Password</FormLabel>
+              <TextField
+                id='password'
+                type='password'
+                name='password'
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={!!passwordError}
+                helperText={passwordError}
+                placeholder='••••••'
+                autoComplete='new-password'
+                variant='outlined'
+                required
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <FormLabel htmlFor='enrollNo'>Enrollment Number</FormLabel>
+              <TextField
+                id='enrollNo'
+                name='enrollNo'
+                value={enrollNo}
+                onChange={(e) => setEnrollNo(e.target.value)}
+                error={!!enrollNoError}
+                helperText={enrollNoError}
+                placeholder='123456'
+                variant='outlined'
+                required
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <FormLabel htmlFor='college'>College</FormLabel>
+              <TextField
+                id='college'
+                name='college'
+                value={college}
+                onChange={(e) => setCollege(e.target.value)}
+                error={!!collegeError}
+                helperText={collegeError}
+                placeholder='LJ University'
+                variant='outlined'
+                required
+              />
+            </FormControl>
+          </Grid>
+        </Grid>
+        <Button
+          type='submit'
+          fullWidth
+          variant='contained'
+          sx={{
+            mt: 3,
+            py: 1.5,
+            fontSize: "1rem",
+            fontWeight: "bold",
+            backgroundColor: "#1FC9A4",
+          }}>
           {student ? "Edit Student" : "Create Student"}
         </Button>
         <ToastContainer />

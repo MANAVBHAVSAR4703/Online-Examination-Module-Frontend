@@ -17,6 +17,8 @@ const api = {
   editStudent: backend_url + "/api/admin/editStudent",
   deleteStudent: backend_url + "/api/admin/deleteStudent",
   deleteQuestion: backend_url + "/api/admin/deleteQuestion",
+  editExam: backend_url + "/api/admin/editExam",
+  deleteExam:backend_url+"/api/admin/deleteExam"
 };
 
 export default api;

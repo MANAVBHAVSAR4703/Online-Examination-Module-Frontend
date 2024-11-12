@@ -10,9 +10,8 @@ import {
   TextField,
   Typography,
   Card,
+  Grid,
 } from "@mui/material";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import api from "../Constants/Api";
 import Cookies from "js-cookie";
@@ -22,12 +21,12 @@ function AddQuestion() {
   const location = useLocation();
   const navigate = useNavigate();
   const { question } = location.state || {};
-  console.log(question);
   const token = Cookies.get("token");
   if (!token) {
     throw new Error("JWT token not found in cookie");
   }
   let AuthStr = `Bearer ${token}`;
+
   const [questionText, setQuestionText] = useState(question?.text ?? "");
   const [category, setCategory] = useState(question?.category ?? "Logical");
   const [options, setOptions] = useState(
@@ -37,11 +36,20 @@ function AddQuestion() {
     question?.correctOptionIndex ?? null
   );
 
+  const [errors, setErrors] = useState({
+    questionText: "",
+    options: "",
+    correctOption: "",
+  });
+
   const handleAddOption = () => {
     if (options.length < 4) {
       setOptions([...options, ""]);
     } else {
-      toast.warn("You can only add up to 4 options");
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        options: "You can only add up to 4 options",
+      }));
     }
   };
 
@@ -60,19 +68,28 @@ function AddQuestion() {
   };
 
   const validateFields = () => {
+    let isValid = true;
+    const newErrors = {
+      questionText: "",
+      options: "",
+      correctOption: "",
+    };
+
     if (!questionText) {
-      toast.error("Question text is required");
-      return false;
+      newErrors.questionText = "Question text is required";
+      isValid = false;
     }
     if (options.some((option) => option.trim() === "")) {
-      toast.error("All options must be filled in");
-      return false;
+      newErrors.options = "All options must be filled in";
+      isValid = false;
     }
     if (correctOptionIndex === null) {
-      toast.error("Please select the correct option");
-      return false;
+      newErrors.correctOption = "Please select the correct option";
+      isValid = false;
     }
-    return true;
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = async (e) => {
@@ -112,29 +129,37 @@ function AddQuestion() {
       );
 
       if (response.data.success) {
-        toast.success(response?.data?.message);
         setTimeout(() => {
           navigate("/dashboard/view-questions");
         }, 1000);
         setQuestionText("");
         setOptions(["", ""]);
         setCorrectOptionIndex(null);
+        setErrors({
+          questionText: "",
+          options: "",
+          correctOption: "",
+        });
       } else {
-        if (question) {
-          toast.error(response?.data?.message || "Failed to Edit Question");
-        } else {
-          toast.error(response?.data?.message || "Failed to Add Question");
-        }
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          options: response?.data?.message || "Failed to submit question",
+        }));
       }
     } catch (error) {
       console.error("Error adding/editing question:", error);
-      toast.error(error?.response?.data?.message || "An Error Occurred!");
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        options: error?.response?.data?.message || "An Error Occurred!",
+      }));
     }
   };
 
   return (
-    <Card variant='outlined' style={{ padding: "2%", width: "60%" }}>
-      <Typography variant='h4' gutterBottom>
+    <Card
+      variant='outlined'
+      sx={{ padding: "2%", width: "100%", maxWidth: "800px", margin: "auto" }}>
+      <Typography variant='h4' gutterBottom fontFamily={"cursive"}>
         {question ? "Edit Question" : "Add Question"}
       </Typography>
       <Box component='form' onSubmit={handleSubmit} noValidate>
@@ -149,73 +174,88 @@ function AddQuestion() {
             rows={2}
             fullWidth
             required
+            error={!!errors.questionText}
+            helperText={errors.questionText}
           />
         </FormControl>
-        <FormControl fullWidth margin='normal'>
-          <FormLabel htmlFor='category'>Category</FormLabel>
-          <RadioGroup
-            id='category'
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            row
-            required>
-            <FormControlLabel
-              value='Logical'
-              control={<Radio />}
-              label='Logical'
-            />
-            <FormControlLabel
-              value='Technical'
-              control={<Radio />}
-              label='Technical'
-            />
-            <FormControlLabel
-              value='Programming'
-              control={<Radio />}
-              label='Programming'
-            />
-          </RadioGroup>
-        </FormControl>
 
-        <FormControl fullWidth margin='normal'>
-          <FormLabel>Options</FormLabel>
-          {options.map((option, index) => (
-            <Box key={index} display='flex' alignItems='center' mb={1}>
-              <TextField
-                value={option}
-                onChange={(e) => handleOptionChange(index, e.target.value)}
-                placeholder={`Option ${index + 1}`}
-                fullWidth
-                required
-              />
-              {index >= 2 && (
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth margin='normal'>
+              <FormLabel htmlFor='category'>Category</FormLabel>
+              <RadioGroup
+                id='category'
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                row
+                required>
+                <FormControlLabel
+                  value='Logical'
+                  control={<Radio />}
+                  label='Logical'
+                />
+                <FormControlLabel
+                  value='Technical'
+                  control={<Radio />}
+                  label='Technical'
+                />
+                <FormControlLabel
+                  value='Programming'
+                  control={<Radio />}
+                  label='Programming'
+                />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth margin='normal'>
+              <FormLabel>Options</FormLabel>
+              {options.map((option, index) => (
+                <Box key={index} display='flex' alignItems='center' mb={1}>
+                  <TextField
+                    value={option}
+                    onChange={(e) => handleOptionChange(index, e.target.value)}
+                    placeholder={`Option ${index + 1}`}
+                    fullWidth
+                    required
+                    error={!!errors.options}
+                    helperText={
+                      errors.options && index === 0 ? errors.options : ""
+                    }
+                  />
+                  {index >= 2 && (
+                    <Button
+                      onClick={() => handleRemoveOption(index)}
+                      color='secondary'
+                      sx={{ ml: 1 }}>
+                      Remove
+                    </Button>
+                  )}
+                </Box>
+              ))}
+
+              {options.length < 4 && (
                 <Button
-                  onClick={() => handleRemoveOption(index)}
-                  color='secondary'
-                  sx={{ ml: 1 }}>
-                  Remove
+                  onClick={handleAddOption}
+                  variant='contained'
+                  color='primary'
+                  fullWidth
+                  sx={{ mt: 1 }}>
+                  Add Option
                 </Button>
               )}
-            </Box>
-          ))}
-
-          {options.length < 4 && (
-            <Button
-              onClick={handleAddOption}
-              variant='contained'
-              color='primary'
-              fullWidth
-              sx={{ mt: 1 }}>
-              Add Option
-            </Button>
-          )}
-        </FormControl>
+            </FormControl>
+          </Grid>
+        </Grid>
 
         <FormControl fullWidth margin='normal'>
           <FormLabel>Correct Answer</FormLabel>
           <RadioGroup
             value={correctOptionIndex}
-            onChange={(e) => setCorrectOptionIndex(parseInt(e.target.value))}>
+            onChange={(e) => setCorrectOptionIndex(parseInt(e.target.value))}
+            error={!!errors.correctOption}
+            helperText={errors.correctOption}>
             {options.map((_, index) => (
               <FormControlLabel
                 key={index}
@@ -226,10 +266,15 @@ function AddQuestion() {
             ))}
           </RadioGroup>
         </FormControl>
-        <Button type='submit' variant='contained' color='primary' fullWidth>
+
+        <Button
+          type='submit'
+          variant='contained'
+          color='primary'
+          sx={{ fontWeight: "bold" }}
+          fullWidth>
           {question ? "Edit Question" : "Submit Question"}
         </Button>
-        <ToastContainer />
       </Box>
     </Card>
   );

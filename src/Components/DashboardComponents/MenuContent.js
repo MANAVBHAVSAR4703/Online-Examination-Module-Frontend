@@ -6,49 +6,60 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import PeopleRoundedIcon from "@mui/icons-material/PeopleRounded";
 import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import {
+  Groups2,
+  Person,
+  QuestionAnswer,
+  QuestionMark,
+  Quiz,
+} from "@mui/icons-material";
+import { Chip, Divider } from "@mui/material";
 
 const mainListItems = [
   { text: "Home", icon: <HomeRoundedIcon />, naviagteLink: "/dashboard" },
   {
     text: "Create Student",
-    icon: <PeopleRoundedIcon />,
+    icon: <Person />,
     naviagteLink: "/dashboard/create-student",
+    chip: "Student",
+  },
+  {
+    text: "View Students",
+    icon: <Groups2 />,
+    naviagteLink: "/dashboard/view-students",
+  },
+  {
+    text: "Add Questions",
+    icon: <QuestionMark />,
+    naviagteLink: "/dashboard/add-question",
+    chip: "Question",
+  },
+  {
+    text: "View Questions",
+    icon: <QuestionAnswer />,
+    naviagteLink: "/dashboard/view-questions",
   },
   {
     text: "Create Exam",
     icon: <AssignmentRoundedIcon />,
     naviagteLink: "/dashboard/create-exam",
-  },
-  {
-    text: "Add Questions",
-    icon: <PeopleRoundedIcon />,
-    naviagteLink: "/dashboard/add-question",
-  },
-  {
-    text: "View Students",
-    icon: <PeopleRoundedIcon />,
-    naviagteLink: "/dashboard/view-students",
+    chip: "Exam",
   },
   {
     text: "View Exams",
-    icon: <AssignmentRoundedIcon />,
+    icon: <Quiz />,
     naviagteLink: "/dashboard/view-exams",
-  },
-  {
-    text: "View Questions",
-    icon: <AssignmentRoundedIcon />,
-    naviagteLink: "/dashboard/view-questions",
   },
   {
     text: "View Results",
     icon: <AssignmentRoundedIcon />,
     naviagteLink: "/dashboard/exam-results",
+    chip: "Results",
   },
 ];
 
@@ -66,19 +77,27 @@ export default function MenuContent() {
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
       <List dense>
         {mainListItems.map((item, index) => (
-          <ListItem
-            key={index}
-            disablePadding
-            sx={{ display: "block" }}
-            onClick={() => {
-              navigate(item?.naviagteLink);
-              setIndex(index);
-            }}>
-            <ListItemButton selected={index === selectedIndex}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
+          <>
+            {" "}
+            {item?.chip && (
+              <Divider>
+                <Chip label={item?.chip} size='small' sx={{fontWeight:'bold',color:"white",background:"black",p:'2px'}}/>
+              </Divider>
+            )}
+            <ListItem
+              key={index}
+              disablePadding
+              sx={{ display: "block" }}
+              onClick={() => {
+                navigate(item?.naviagteLink);
+                setIndex(index);
+              }}>
+              <ListItemButton selected={index === selectedIndex}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          </>
         ))}
       </List>
 

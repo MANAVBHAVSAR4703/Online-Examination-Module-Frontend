@@ -25,15 +25,15 @@ export default function ColorModeIconDropdown(props) {
     return (
       <Box
         data-screenshot='toggle-mode'
-        sx={(theme) => ({
+        sx={{
           verticalAlign: "bottom",
           display: "inline-flex",
           width: "2.25rem",
           height: "2.25rem",
-          borderRadius: (theme.vars || theme).shape.borderRadius,
+          borderRadius: "10px",
           border: "1px solid",
-          borderColor: (theme.vars || theme).palette.divider,
-        })}
+          borderColor: "primary",
+        }}
       />
     );
   }
@@ -43,7 +43,7 @@ export default function ColorModeIconDropdown(props) {
     dark: <DarkModeIcon />,
   }[resolvedMode];
   return (
-    <React.Fragment>
+    <>
       <IconButton
         data-screenshot='toggle-mode'
         onClick={handleClick}
@@ -81,6 +81,6 @@ export default function ColorModeIconDropdown(props) {
           Dark
         </MenuItem>
       </Menu>
-    </React.Fragment>
+    </>
   );
 }

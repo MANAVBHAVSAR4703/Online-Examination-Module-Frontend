@@ -7,6 +7,15 @@ import Loading from "../Loading";
 import axios from "axios";
 import api from "../../Constants/Api";
 import Cookies from "js-cookie";
+import {
+  ArticleOutlined,
+  Computer,
+  PersonOutline,
+  QuizOutlined,
+  SchoolOutlined,
+  TungstenOutlined,
+} from "@mui/icons-material";
+import PsychologyOutlinedIcon from "@mui/icons-material/PsychologyOutlined";
 
 export default function MainGrid() {
   const token = Cookies.get("token");
@@ -41,18 +50,30 @@ export default function MainGrid() {
   }
 
   const data = [
-    { title: "Students", value: overview?.studentCount },
-    { title: "Exams", value: overview?.examCount },
     {
-      title: "Total Questions",
-      value:
-        overview?.programmingQuestionsCount +
-        overview?.logicalQuestionsCount +
-        overview?.technicalQuestionsCount,
+      title: "Students",
+      value: overview.studentCount,
+      icon: <PersonOutline />,
     },
-    { title: "Colleges", value: overview?.collegesCount },
+    {
+      title: "Exams",
+      value: overview.examCount,
+      icon: <ArticleOutlined />,
+    },
+    {
+      title: "Questions",
+      value:
+        overview.programmingQuestionsCount +
+        overview.technicalQuestionsCount +
+        overview.logicalQuestionsCount,
+      icon: <QuizOutlined />,
+    },
+    {
+      title: "Colleges",
+      value: overview.collegesCount,
+      icon: <SchoolOutlined />,
+    },
   ];
-
   return (
     <Box
       sx={{
@@ -67,9 +88,14 @@ export default function MainGrid() {
         Overview
       </Typography>
       <Grid container spacing={4} justifyContent='center'>
-        {data.map((card, index) => (
+        {data.map((item, index) => (
           <Grid item xs={12} sm={6} md={3} key={index} size={3}>
-            <StatCard {...card} />
+            <StatCard
+              key={index}
+              title={item.title}
+              value={item.value}
+              icon={item.icon}
+            />
           </Grid>
         ))}
       </Grid>
@@ -77,7 +103,7 @@ export default function MainGrid() {
         component='h2'
         variant='h6'
         sx={{ my: 6, textAlign: "center" }}>
-        Question Categories
+        Question Bank
       </Typography>
       <Grid container spacing={4} justifyContent='center'>
         <Grid
@@ -90,6 +116,7 @@ export default function MainGrid() {
           <StatCard
             title={"Programming Questions"}
             value={overview?.programmingQuestionsCount}
+            icon={<Computer />}
           />
         </Grid>
         <Grid
@@ -102,12 +129,14 @@ export default function MainGrid() {
           <StatCard
             title={"Technical Questions"}
             value={overview?.technicalQuestionsCount}
+            icon={<TungstenOutlined />}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3} key={"logicalQuestionsCount"} size={4}>
           <StatCard
             title={"Logical Questions"}
             value={overview?.logicalQuestionsCount}
+            icon={<PsychologyOutlinedIcon />}
           />
         </Grid>
       </Grid>

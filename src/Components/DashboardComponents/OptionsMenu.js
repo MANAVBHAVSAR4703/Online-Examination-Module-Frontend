@@ -10,12 +10,14 @@ import ListItemIcon, { listItemIconClasses } from "@mui/material/ListItemIcon";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
 import MenuButton from "./MenuButton";
+import { useNavigate } from "react-router-dom";
 
 const MenuItem = styled(MuiMenuItem)({
   margin: "2px 0",
 });
 
 export default function OptionsMenu() {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -51,7 +53,12 @@ export default function OptionsMenu() {
             margin: "4px -4px",
           },
         }}>
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/dashboard/profile");
+          }}>
+          Profile
+        </MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>Add another account</MenuItem>

@@ -6,6 +6,9 @@ import {
   AccordionDetails,
   Box,
   Chip,
+  IconButton,
+  Divider,
+  Tooltip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Delete, EditNote } from "@mui/icons-material";
@@ -23,8 +26,7 @@ function QuestionViewComponent({ questions }) {
   }
 
   const [questionList, setQuestionList] = useState(questions);
-
-  let AuthStr = `Bearer ${token}`;
+  const AuthStr = `Bearer ${token}`;
 
   const deleteQuestion = async (questionData) => {
     try {
@@ -48,9 +50,9 @@ function QuestionViewComponent({ questions }) {
   };
 
   return (
-    <Box sx={{ padding: 3 }} style={{ width: "85%" }}>
+    <Box sx={{ padding: 3,width:"100%", margin: "0 auto" }}>
       <ToastContainer />
-      <Typography variant='h4' gutterBottom align='center'>
+      <Typography variant='h4' gutterBottom align='center' fontFamily={"cursive"}>
         Question List
       </Typography>
       {questionList.map((question) => (
@@ -60,50 +62,63 @@ function QuestionViewComponent({ questions }) {
               label={question.category}
               color='primary'
               variant='outlined'
-              sx={{ marginRight: 1 }}
+              sx={{ marginRight: 2 }}
             />
             <Typography
-              variant='h7'
-              style={{
-                marginLeft: "10px",
-                marginRight: "10px",
-                width: "90%",
-                justifyContent: "start",
-                display: "flex",
-              }}>
+              variant='body1'
+              sx={{ flexGrow: 1, fontWeight: 500, color: "text.primary" }}>
               {question.text}
             </Typography>
-            <div
-              onClick={() =>
-                navigate("/dashboard/edit-question", { state: { question } })
-              }>
-              <Box>
-                <EditNote />
-              </Box>
-            </div>
-            <div onClick={() => deleteQuestion(question)}>
-              <Box>
-                <Delete />
-              </Box>
-            </div>
+            <Box display='flex' alignItems='center'>
+              <Tooltip title='Edit Question'>
+                <IconButton
+                  onClick={() =>
+                    navigate("/dashboard/edit-question", {
+                      state: { question },
+                    })
+                  }>
+                  <EditNote color='info' />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title='Delete Question'>
+                <IconButton onClick={() => deleteQuestion(question)}>
+                  <Delete color='error' />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography variant='subtitle1' sx={{ marginBottom: 1 }}>
+            <Divider sx={{ mb: 2 }} />
+            <Typography
+              variant='subtitle1'
+              sx={{ mb: 1, color: "text.secondary" }}>
               Options:
             </Typography>
             {question.options.map((option, index) => (
               <Box
                 key={option.id}
-                sx={{ display: "flex", alignItems: "center" }}>
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "4px 0",
+                  borderRadius: 1,
+                  "&:hover": {
+                    backgroundColor: "action.hover",
+                  },
+                }}>
                 <Typography variant='body2' sx={{ marginRight: 1 }}>
                   {String.fromCharCode(65 + index)}.
                 </Typography>
-                <Typography variant='body2'>{option.text}</Typography>
+                <Typography variant='body2' sx={{ color: "text.primary" }}>
+                  {option.text}
+                </Typography>
               </Box>
             ))}
-            <Typography variant='body2' sx={{ marginTop: 1, color: "green" }}>
+            <Typography variant='body2' sx={{ mt: 2, color: "success.main" }}>
               Correct Option:{" "}
-              {String.fromCharCode(65 + question.correctOptionIndex)}
+              <strong>
+                {String.fromCharCode(65 + question.correctOptionIndex)}
+              </strong>
             </Typography>
           </AccordionDetails>
         </Accordion>

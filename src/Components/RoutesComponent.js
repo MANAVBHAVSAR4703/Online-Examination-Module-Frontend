@@ -38,6 +38,7 @@ function RoutesComponent() {
       <Routes>
         <Route exact path='/' element={<SignIn />} />
         <Route exact path='/403' element={<NoPage />} />
+        <Route exact path='/*' element={<NoPage />} />
         <Route
           path='/dashboard/*'
           element={
