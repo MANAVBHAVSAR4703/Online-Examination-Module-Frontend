@@ -2,13 +2,13 @@ import * as React from "react";
 import SvgIcon from "@mui/material/SvgIcon";
 import { useTheme } from "@mui/material";
 
-export function SitemarkIcon() {
+export function SitemarkIcon({height,width}) {
   const theme = useTheme();
   return (
     <SvgIcon
       sx={{
-        height: 21,
-        width: 100,
+        height: height??21,
+        width: width??100,
       }}>
       <svg
         xmlns='http://www.w3.org/2000/svg'

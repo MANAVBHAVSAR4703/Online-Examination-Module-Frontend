@@ -16,6 +16,8 @@ import ViewQuestions from "./ViewQuestions";
 import ViewResultsPage from "./ViewResultsPage";
 import ExamResultPage from "./ExamResultPage";
 import Profile from "./Profile";
+import QuestionTabs from "./QuestionTabs";
+import ViewProgrammingQuestions from "./ViewProgrammingQuestions";
 
 function RedirectTo403() {
   const navigate = useNavigate();
@@ -48,9 +50,10 @@ function AdminDashboard({ user }) {
             <Route exact path='/' element={<MainGrid />} />
             <Route exact path='/create-student' element={<CreateStudent />} />
             <Route exact path='/create-exam' element={<CreateExam />} />
-            <Route exact path='/add-question' element={<AddQuestion />} />
+            <Route exact path='/add-question' element={<QuestionTabs />} />
             <Route exact path='/view-students' element={<ViewStudents />} />
             <Route exact path='/view-exams' element={<ViewExams />} />
+            <Route exact path='/view-programmingQuestions' element={<ViewProgrammingQuestions />} />
             <Route exact path='/edit-student' element={<CreateStudent />} />
             <Route exact path='/edit-question' element={<AddQuestion />} />
             <Route exact path='/edit-exam' element={<CreateExam />} />

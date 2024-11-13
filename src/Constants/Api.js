@@ -1,4 +1,4 @@
-const backend_url = "http://localhost:8080";
+const backend_url = "http://192.168.1.7:8080";
 
 const api = {
   Login: backend_url + "/api/auth/login",
@@ -17,8 +17,12 @@ const api = {
   editStudent: backend_url + "/api/admin/editStudent",
   deleteStudent: backend_url + "/api/admin/deleteStudent",
   deleteQuestion: backend_url + "/api/admin/deleteQuestion",
+  editQuestion: backend_url + "/api/admin/editQuestion",
   editExam: backend_url + "/api/admin/editExam",
-  deleteExam:backend_url+"/api/admin/deleteExam"
+  deleteExam: backend_url + "/api/admin/deleteExam",
+  createProgrammingQuestion:
+    backend_url + "/api/admin/createProgrammingQuestion",
+  GetProgrammingQuestions: backend_url + "/api/admin/getProgrammingQuestions",
 };
 
 export default api;

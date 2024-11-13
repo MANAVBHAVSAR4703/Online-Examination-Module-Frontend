@@ -37,6 +37,10 @@ function CreateExam() {
   const [technicalQuestionsCount, setTechnicalQuestionsCount] = useState("");
   const [programmingQuestionsCount, setProgrammingQuestionsCount] =
     useState("");
+  const [
+    programmingSectionQuestionsCount,
+    setProgrammingSectionQuestionsCount,
+  ] = useState("");
   const [college, setCollege] = useState("");
 
   const [titleError, setTitleError] = useState("");
@@ -49,6 +53,10 @@ function CreateExam() {
     useState("");
   const [programmingQuestionsCountError, setProgrammingQuestionsCountError] =
     useState("");
+  const [
+    programmingSectionQuestionsCountError,
+    setProgrammingSectionQuestionsCountError,
+  ] = useState("");
   const [collegeError, setCollegeError] = useState("");
 
   const validateFields = () => {
@@ -126,6 +134,19 @@ function CreateExam() {
       setProgrammingQuestionsCountError("");
     }
 
+    if (
+      !programmingSectionQuestionsCount ||
+      isNaN(programmingSectionQuestionsCount) ||
+      programmingSectionQuestionsCount < 0
+    ) {
+      setProgrammingQuestionsCountError(
+        "Programming Section questions count must be a non-negative number"
+      );
+      isValid = false;
+    } else {
+      setProgrammingSectionQuestionsCountError("");
+    }
+
     if (!college) {
       setCollegeError("College name is required");
       isValid = false;
@@ -151,6 +172,10 @@ function CreateExam() {
       logicalQuestionsCount: parseInt(logicalQuestionsCount, 10),
       technicalQuestionsCount: parseInt(technicalQuestionsCount, 10),
       programmingQuestionsCount: parseInt(programmingQuestionsCount, 10),
+      programmingSectionQuestionsCount: parseInt(
+        programmingSectionQuestionsCount,
+        10
+      ),
       college,
     };
 
@@ -174,11 +199,9 @@ function CreateExam() {
       );
       if (response.data.success) {
         toast.success(response?.data?.message);
-        if (exam) {
-          setTimeout(() => {
-            navigate("/dashboard/view-exams");
-          }, 2000);
-        }
+        setTimeout(() => {
+          navigate("/dashboard/view-exams");
+        }, 2000);
         setTitle("");
         setStartTime("");
         setDuration("");
@@ -186,6 +209,7 @@ function CreateExam() {
         setLogicalQuestionsCount("");
         setTechnicalQuestionsCount("");
         setProgrammingQuestionsCount("");
+        setProgrammingSectionQuestionsCount("");
         setCollege("");
       } else {
         toast.error(response?.data?.message || "Failed to Create/Update Exam");
@@ -345,6 +369,25 @@ function CreateExam() {
                     }
                     error={!!programmingQuestionsCountError}
                     helperText={programmingQuestionsCountError}
+                    variant='outlined'
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <FormLabel htmlFor='programmingQuestionsCount'>
+                    Programming Section Questions Count
+                  </FormLabel>
+                  <TextField
+                    id='programmingQuestionsCount'
+                    type='number'
+                    name='programmingQuestionsCount'
+                    value={programmingSectionQuestionsCount}
+                    onChange={(e) =>
+                      setProgrammingSectionQuestionsCount(e.target.value)
+                    }
+                    error={!!programmingSectionQuestionsCountError}
+                    helperText={programmingSectionQuestionsCountError}
                     variant='outlined'
                   />
                 </FormControl>

@@ -60,12 +60,11 @@ function QuestionViewComponent({ questions }) {
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Chip
               label={question.category}
-              color='primary'
-              variant='outlined'
+              color={getCategoryColor(question.category)}
               sx={{ marginRight: 2 }}
             />
             <Typography
-              variant='body1'
+              variant='subtitle1'
               sx={{ flexGrow: 1, fontWeight: 500, color: "text.primary" }}>
               {question.text}
             </Typography>
@@ -125,6 +124,19 @@ function QuestionViewComponent({ questions }) {
       ))}
     </Box>
   );
+}
+
+function getCategoryColor(category) {
+  switch (category) {
+    case "Logical":
+      return "success";
+    case "Programming":
+      return "warning";
+    case "Technical":
+      return "error";
+    default:
+      return "default";
+  }
 }
 
 export default QuestionViewComponent;

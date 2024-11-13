@@ -16,6 +16,7 @@ import axios from "axios";
 import api from "../Constants/Api";
 import Cookies from "js-cookie";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 function AddQuestion() {
   const location = useLocation();
@@ -129,6 +130,7 @@ function AddQuestion() {
       );
 
       if (response.data.success) {
+        toast.success(response?.data?.message);
         setTimeout(() => {
           navigate("/dashboard/view-questions");
         }, 1000);
@@ -141,6 +143,7 @@ function AddQuestion() {
           correctOption: "",
         });
       } else {
+        toast.error(response?.data?.message || "Failed to process request");
         setErrors((prevErrors) => ({
           ...prevErrors,
           options: response?.data?.message || "Failed to submit question",
@@ -148,6 +151,7 @@ function AddQuestion() {
       }
     } catch (error) {
       console.error("Error adding/editing question:", error);
+      toast.error(error?.response?.data?.message || "An Error Occurred!");
       setErrors((prevErrors) => ({
         ...prevErrors,
         options: error?.response?.data?.message || "An Error Occurred!",
@@ -159,9 +163,7 @@ function AddQuestion() {
     <Card
       variant='outlined'
       sx={{ padding: "2%", width: "100%", maxWidth: "800px", margin: "auto" }}>
-      <Typography variant='h4' gutterBottom fontFamily={"cursive"}>
-        {question ? "Edit Question" : "Add Question"}
-      </Typography>
+      <ToastContainer />
       <Box component='form' onSubmit={handleSubmit} noValidate>
         <FormControl fullWidth margin='normal'>
           <FormLabel htmlFor='questionText'>Question</FormLabel>

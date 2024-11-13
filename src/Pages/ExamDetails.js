@@ -3,6 +3,7 @@ import StudentViewComponent from "../Components/StudentViewComponent";
 import { useLocation } from "react-router-dom";
 import { Typography } from "@mui/material";
 import QuestionViewComponent from "../Components/QuestionViewComponent";
+import ProgrammingQuestionViewComponent from "../Components/ProgrammingQuestionViewComponent";
 
 function ExamDetails() {
   const location = useLocation();
@@ -14,6 +15,7 @@ function ExamDetails() {
       </Typography>
       <StudentViewComponent students={examData?.enrolledStudents} />
       <QuestionViewComponent questions={examData?.questions} />
+      <ProgrammingQuestionViewComponent questions={examData?.programmingQuestions} />
     </>
   );
 }

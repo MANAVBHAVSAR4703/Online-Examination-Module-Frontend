@@ -13,7 +13,7 @@ function StatCard({ title, value, icon }) {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        backgroundColor: "#f9fafc",
+        backgroundColor: theme?.palette?.mode==="dark"?"#121212":"white",
       }}>
       <Box display='flex' alignItems='center' mb={1}>
         <Box
@@ -29,7 +29,7 @@ function StatCard({ title, value, icon }) {
           }}>
           {icon}
         </Box>
-        <Typography variant='subtitle2' color='black'>
+        <Typography variant='subtitle2'>
           {title}
         </Typography>
       </Box>

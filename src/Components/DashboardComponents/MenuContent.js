@@ -12,6 +12,7 @@ import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
 import { useNavigate } from "react-router-dom";
 import {
+  Computer,
   Groups2,
   Person,
   QuestionAnswer,
@@ -43,6 +44,11 @@ const mainListItems = [
     text: "View Questions",
     icon: <QuestionAnswer />,
     naviagteLink: "/dashboard/view-questions",
+  },
+  {
+    text: "View Programming Questions",
+    icon: <Computer />,
+    naviagteLink: "/dashboard/view-programmingQuestions",
   },
   {
     text: "Create Exam",

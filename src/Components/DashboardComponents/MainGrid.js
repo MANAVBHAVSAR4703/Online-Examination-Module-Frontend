@@ -1,5 +1,5 @@
 import * as React from "react";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import StatCard from "./StatCard";
@@ -74,65 +74,58 @@ export default function MainGrid() {
       icon: <SchoolOutlined />,
     },
   ];
+
   return (
     <Box
       sx={{
         width: "100%",
         maxWidth: { sm: "100%", md: "1700px" },
         mx: "auto",
+        padding: "20px", 
       }}>
       <Typography
         component='h2'
         variant='h6'
-        sx={{ mb: 4, textAlign: "center" }}>
+        sx={{ mb: 4, textAlign: "center", fontFamily: "cursive" }}>
         Overview
       </Typography>
+
       <Grid container spacing={4} justifyContent='center'>
         {data.map((item, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index} size={3}>
-            <StatCard
-              key={index}
-              title={item.title}
-              value={item.value}
-              icon={item.icon}
-            />
+          <Grid
+            item
+            xs={12} 
+            sm={6} 
+            md={3} 
+            key={index}>
+            <StatCard title={item.title} value={item.value} icon={item.icon} />
           </Grid>
         ))}
       </Grid>
+
       <Typography
         component='h2'
         variant='h6'
-        sx={{ my: 6, textAlign: "center" }}>
+        sx={{ my: 6, textAlign: "center", fontFamily: "cursive" }}>
         Question Bank
       </Typography>
+
       <Grid container spacing={4} justifyContent='center'>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={3}
-          key={"programmingQuestionsCount"}
-          size={4}>
+        <Grid item xs={12} sm={6} md={3} key={"programmingQuestionsCount"}>
           <StatCard
             title={"Programming Questions"}
             value={overview?.programmingQuestionsCount}
             icon={<Computer />}
           />
         </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={3}
-          key={"technicalQuestionsCount"}
-          size={4}>
+        <Grid item xs={12} sm={6} md={3} key={"technicalQuestionsCount"}>
           <StatCard
             title={"Technical Questions"}
             value={overview?.technicalQuestionsCount}
             icon={<TungstenOutlined />}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3} key={"logicalQuestionsCount"} size={4}>
+        <Grid item xs={12} sm={6} md={3} key={"logicalQuestionsCount"}>
           <StatCard
             title={"Logical Questions"}
             value={overview?.logicalQuestionsCount}
