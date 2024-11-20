@@ -4,7 +4,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import AddQuestion from "./AddQuestion";
-import AddProgrammingQuestion from "./AddProgrammingQuestion"; 
+import AddProgrammingQuestion from "./AddProgrammingQuestion";
 
 export default function QuestionTabs() {
   const [tabValue, setTabValue] = useState("1");

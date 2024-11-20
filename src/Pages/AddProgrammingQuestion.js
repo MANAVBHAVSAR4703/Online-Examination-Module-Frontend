@@ -17,7 +17,7 @@ import {
 import axios from "axios";
 import api from "../Constants/Api";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import MonacoEditor from "@monaco-editor/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,15 +25,22 @@ import "react-toastify/dist/ReactToastify.css";
 function AddProgrammingQuestion() {
   const navigate = useNavigate();
   const theme = useTheme();
+  const location = useLocation();
+  const programmingQuestion = location?.state?.programmingQuestion;
+  console.log(programmingQuestion);
   const token = Cookies.get("token");
   if (!token) {
     throw new Error("JWT token not found in cookie");
   }
   const AuthStr = `Bearer ${token}`;
 
-  const [questionText, setQuestionText] = useState("");
-  const [code, setCode] = useState("");
-  const [difficulty, setDifficulty] = useState("EASY");
+  const [questionText, setQuestionText] = useState(
+    programmingQuestion?.text ?? ""
+  );
+  const [code, setCode] = useState(programmingQuestion?.code ?? "");
+  const [difficulty, setDifficulty] = useState(
+    programmingQuestion?.difficulty ?? "EASY"
+  );
   const [language, setLanguage] = useState("plaintext");
   const [errors, setErrors] = useState({
     questionText: "",
@@ -69,16 +76,24 @@ function AddProgrammingQuestion() {
       return;
     }
 
-    const questionData = {
-      text: questionText,
-      code,
-      difficulty,
-      language,
-    };
+    const questionData = programmingQuestion
+      ? {
+          id: programmingQuestion.id,
+          text: questionText,
+          code,
+          difficulty,
+        }
+      : {
+          text: questionText,
+          code,
+          difficulty,
+        };
 
     try {
       const response = await axios.post(
-        api.createProgrammingQuestion,
+        programmingQuestion
+          ? api.editProgrammingQuestion
+          : api.createProgrammingQuestion,
         questionData,
         {
           headers: {
@@ -90,16 +105,20 @@ function AddProgrammingQuestion() {
       if (response.data.success) {
         toast.success(response?.data?.message);
         setTimeout(() => {
-          navigate("/dashboard/view-questions");
+          navigate("/dashboard/view-programmingQuestions");
         }, 1000);
       } else {
         setErrors((prevErrors) => ({
           ...prevErrors,
           code:
-            response?.data?.message || "Failed to submit programming question",
+            response?.data?.message || programmingQuestion
+              ? "Failed to edit programming question"
+              : "Failed to submit programming question",
         }));
         toast.error(
-          response?.data?.message || "Failed to submit programming question"
+          response?.data?.message || programmingQuestion
+            ? "Failed to edit programming question"
+            : "Failed to submit programming question"
         );
       }
     } catch (error) {
@@ -194,7 +213,7 @@ function AddProgrammingQuestion() {
           color='primary'
           fullWidth
           sx={{ fontWeight: "bold" }}>
-          Submit Programming Question
+          {programmingQuestion ? "Edit" : "Submit"} Programming Question
         </Button>
       </Box>
     </Card>

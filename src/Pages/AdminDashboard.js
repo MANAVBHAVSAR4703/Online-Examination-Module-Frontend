@@ -1,6 +1,6 @@
 import { alpha, Box, Stack } from "@mui/material";
 import React from "react";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import AppNavbar from "../Components/DashboardComponents/AppNavbar";
 import SideMenu from "../Components/DashboardComponents/SideMenu";
 import Header from "../Components/DashboardComponents/Header";
@@ -18,6 +18,7 @@ import ExamResultPage from "./ExamResultPage";
 import Profile from "./Profile";
 import QuestionTabs from "./QuestionTabs";
 import ViewProgrammingQuestions from "./ViewProgrammingQuestions";
+import AddProgrammingQuestion from "./AddProgrammingQuestion";
 
 function RedirectTo403() {
   const navigate = useNavigate();
@@ -56,6 +57,7 @@ function AdminDashboard({ user }) {
             <Route exact path='/view-programmingQuestions' element={<ViewProgrammingQuestions />} />
             <Route exact path='/edit-student' element={<CreateStudent />} />
             <Route exact path='/edit-question' element={<AddQuestion />} />
+            <Route exact path='/edit-programmingQuestion' element={<AddProgrammingQuestion />} />
             <Route exact path='/edit-exam' element={<CreateExam />} />
             <Route exact path='/profile' element={<Profile />} />
             <Route

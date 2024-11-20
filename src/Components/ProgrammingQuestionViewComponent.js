@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -11,9 +11,47 @@ import {
   IconButton,
 } from "@mui/material";
 import { ExpandMore, Delete, EditNote } from "@mui/icons-material";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import api from "../Constants/Api";
+import Cookies from "js-cookie";
 
-function ProgrammingQuestionViewComponent({ questions, onEdit, onDelete }) {
+function ProgrammingQuestionViewComponent({ questions }) {
+  const [questionsList, setQuestionList] = useState(questions);
+  const token = Cookies.get("token");
+  if (!token) {
+    throw new Error("JWT token not found in cookie");
+  }
+  const AuthStr = `Bearer ${token}`;
+  const onDelete = async (id) => {
+    try {
+      const response = await axios.post(
+        api.deleteProgrammingQuestion + `/${id}`,
+        null,
+        {
+          headers: {
+            Authorization: AuthStr,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        toast.success(response?.data?.message);
+        setQuestionList((prevQuestions) =>
+          prevQuestions.filter((q) => q.id !== id)
+        );
+      } else {
+        toast.error(
+          response?.data?.message || "Failed to edit programming question"
+        );
+      }
+    } catch (error) {
+      console.error("Error adding programming question:", error);
+      toast.error(error?.response?.data?.message || "An Error Occurred!");
+    }
+  };
+  const navigate = useNavigate();
   return (
     <Box sx={{ width: "100%", margin: "0 auto", padding: 3 }}>
       <ToastContainer />
@@ -24,8 +62,8 @@ function ProgrammingQuestionViewComponent({ questions, onEdit, onDelete }) {
         fontFamily={"cursive"}>
         Programming Question List
       </Typography>
-      {questions.length > 0 ? (
-        questions.map((question) => (
+      {questionsList.length > 0 ? (
+        questionsList.map((question) => (
           <Accordion
             key={question.id}
             sx={{ mb: 2, borderRadius: 2, boxShadow: 3 }}>
@@ -48,7 +86,11 @@ function ProgrammingQuestionViewComponent({ questions, onEdit, onDelete }) {
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <IconButton
                   color='info'
-                  onClick={() => onEdit(question.id)}
+                  onClick={() =>
+                    navigate("/dashboard/edit-programmingQuestion", {
+                      state: { programmingQuestion: question },
+                    })
+                  }
                   sx={{ mr: 0, "&:hover": { backgroundColor: "#e0f7fa" } }}>
                   <EditNote />
                 </IconButton>
