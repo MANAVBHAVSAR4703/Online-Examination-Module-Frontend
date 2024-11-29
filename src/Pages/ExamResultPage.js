@@ -1,61 +1,72 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  Paper,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableContainer,
-} from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Typography, Paper, IconButton, Tooltip } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import { OpenInNew } from "@mui/icons-material";
 
 function ExamResultPage() {
+  const navigate = useNavigate();
   const location = useLocation();
   const { exam } = location.state;
 
+  const columns = [
+    { field: "studentEmail", headerName: "Student Email", flex: 1 },
+    {
+      field: "correctAnswerTotal",
+      headerName: "Correct Answers",
+      flex: 0.5,
+    },
+    {
+      field: "passed",
+      headerName: "Passed",
+      flex: 0.5,
+      valueFormatter: (params) => (params ? "Yes" : "No"),
+    },
+    {
+      field: "programmingResults",
+      headerName: "Programming Code",
+      flex: 0.5,
+      sortable: false,
+      renderCell: (params) => (
+        <Tooltip title='View Programming Results'>
+          <IconButton
+            onClick={() =>
+              navigate("programming-results", {
+                state: {
+                  programmingResponses: params.row.programmingQuestionResponses,
+                },
+              })
+            }>
+            <OpenInNew color='success' />
+          </IconButton>
+        </Tooltip>
+      ),
+    },
+  ];
+
+  const rows = exam?.studentResults?.map((student, index) => ({
+    id: index,
+    ...student,
+  }));
+
   return (
-    <Box sx={{ p: 3, width: "70%" }}>
+    <Box sx={{ p: 3, width: "100%" }}>
       <Typography variant='h4' gutterBottom>
         Results for {exam.examName}
       </Typography>
-      <Typography variant='h6'>Total Passed: {exam.totalPassed}</Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Student Email</TableCell>
-              <TableCell align='right'>Correct Answers</TableCell>
-              <TableCell align='right'>Passed</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {exam?.studentResults?.length > 0 ? (
-              exam?.studentResults?.map((student, index) => (
-                <TableRow key={index}>
-                  <TableCell component='th' scope='row'>
-                    {student?.studentEmail}
-                  </TableCell>
-                  <TableCell align='right'>
-                    {student?.correctAnswerTotal}
-                  </TableCell>
-                  <TableCell align='right'>
-                    {student.passed ? "Yes" : "No"}
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={3} align='center'>
-                  <Typography>No results available for this exam.</Typography>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Typography variant='h6' gutterBottom>
+        Total Passed: {exam.totalPassed}
+      </Typography>
+      <Paper sx={{ height: 400, mt: 3 }}>
+        <DataGrid
+          rows={rows || []}
+          columns={columns}
+          pageSize={10}
+          rowsPerPageOptions={[5, 10, 20]}
+          disableSelectionOnClick
+          sx={{ border: 0 }}
+        />
+      </Paper>
     </Box>
   );
 }

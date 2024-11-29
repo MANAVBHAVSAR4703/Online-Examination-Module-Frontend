@@ -23,7 +23,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import api from "../Constants/Api";
 import { useSelector } from "react-redux";
-import CodeEditor from "@monaco-editor/react"; // For the code editor (install monaco editor)
+import CodeEditor from "@monaco-editor/react"; 
 import { useTheme } from "@emotion/react";
 
 const ExamPage = () => {
@@ -38,8 +38,8 @@ const ExamPage = () => {
   const user = useSelector((state) => state.auth.user);
   const [timeOverMessage, setTimeOverMessage] = useState("");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState([]); // MCQ answers
-  const [programmingAnswers, setProgrammingAnswers] = useState([]); // Programming answers
+  const [selectedAnswers, setSelectedAnswers] = useState([]); 
+  const [programmingAnswers, setProgrammingAnswers] = useState([]); 
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
@@ -130,10 +130,10 @@ const ExamPage = () => {
         selectedAnswers[index] !== undefined ? selectedAnswers[index] : null,
     }));
 
-    const programmingResponses = exam.programmingQuestions.map(
+    const programmingQuestionResponses = exam.programmingQuestions.map(
       (question, index) => ({
         questionId: question.id,
-        code: programmingAnswers[index] || "",
+        refCode: programmingAnswers[index] || "",
       })
     );
 
@@ -144,7 +144,7 @@ const ExamPage = () => {
           examId: examID.id,
           studentEmail: user.email,
           responses,
-          programmingResponses,
+          programmingQuestionResponses,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -167,7 +167,6 @@ const ExamPage = () => {
         p: 3,
         backgroundColor: "#f7f9fc",
       }}>
-      {/* Main Content Area */}
       <Box sx={{ flex: 1, p: 2 }}>
         <Typography
           variant='h3'
@@ -190,7 +189,6 @@ const ExamPage = () => {
           </Typography>
         )}
 
-        {/* Question Panel */}
         <Paper
           elevation={4}
           sx={{

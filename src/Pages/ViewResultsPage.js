@@ -1,31 +1,24 @@
 import React, { useEffect, useState } from "react";
+import { Box, Paper, Tooltip, IconButton, Typography } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import { OpenInNew } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Typography,
-  Paper,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableContainer,
-} from "@mui/material";
 import axios from "axios";
 import api from "../Constants/Api";
 import Cookies from "js-cookie";
+import Loading from "../Components/Loading";
 
 const ViewResultsPage = () => {
   const [examsData, setExamsData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const token = Cookies.get("token");
 
   if (!token) {
     throw new Error("JWT token not found in cookie");
   }
-  
-  let AuthStr = `Bearer ${token}`;
+
+  const AuthStr = `Bearer ${token}`;
 
   useEffect(() => {
     const fetchExamResults = async () => {
@@ -38,6 +31,8 @@ const ViewResultsPage = () => {
         setExamsData(response.data);
       } catch (error) {
         console.error("Error fetching exam results", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -50,46 +45,52 @@ const ViewResultsPage = () => {
     });
   };
 
+  const columns = [
+    { field: "examName", headerName: "Exam Name", width: 500 },
+    {
+      field: "examStartTime",
+      headerName: "Exam Start Time",
+      width: 250,
+      renderCell: (params) => new Date(params.value).toLocaleDateString(),
+    },
+    { field: "examDuration", headerName: "Exam Duration", width: 250 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 100,
+      sortable: false,
+      renderCell: (params) => (
+        <Tooltip title='View Results'>
+          <IconButton onClick={() => handleViewResults(params.row)}>
+            <OpenInNew color='primary' />
+          </IconButton>
+        </Tooltip>
+      ),
+    },
+  ];
+
+  const paginationModel = { page: 0, pageSize: 5 };
+
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <Box sx={{ p: 3, width: "100%" }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant='h4' gutterBottom fontFamily={"cursive"}>
         Exam Results
       </Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Exam Name</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {examsData.length > 0 ? (
-              examsData.map((exam) => (
-                <TableRow key={exam.examId}>
-                  <TableCell component="th" scope="row">
-                    {exam.examName}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Button
-                      variant="contained"
-                      onClick={() => handleViewResults(exam)}
-                    >
-                      View Results
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={2} align="center">
-                  <Typography>No exams found.</Typography>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Paper sx={{ width: "100%", padding: 3 }}>
+        <DataGrid
+          rows={examsData}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10, 20]}
+          disableSelectionOnClick
+          getRowId={(row) => row.examId}
+          sx={{ border: 0 }}
+        />
+      </Paper>
     </Box>
   );
 };
