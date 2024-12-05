@@ -20,6 +20,7 @@ import QuestionTabs from "./QuestionTabs";
 import ViewProgrammingQuestions from "./ViewProgrammingQuestions";
 import AddProgrammingQuestion from "./AddProgrammingQuestion";
 import ViewProgrammingResult from './ViewProgrammingResult'
+import ViewMonitoredImages from "./ViewMonitoredImages";
 
 function RedirectTo403() {
   const navigate = useNavigate();
@@ -73,6 +74,7 @@ function AdminDashboard({ user }) {
               element={<ExamResultPage />}
             />
             <Route exact path='/exam-results/:examId/programming-results' element={<ViewProgrammingResult />} />
+            <Route exact path='/exam-results/:examId/monitored-images' element={<ViewMonitoredImages />} />
             <Route exact path='/view-questions' element={<ViewQuestions />} />
             <Route exact path='/403' element={<NoPage />} />
             <Route exact path='/*' element={<RedirectTo403 />} />

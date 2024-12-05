@@ -7,6 +7,7 @@ import axios from "axios";
 import api from "../Constants/Api";
 import Cookies from "js-cookie";
 import Loading from "../Components/Loading";
+import { format } from "date-fns";
 
 const ViewResultsPage = () => {
   const [examsData, setExamsData] = useState([]);
@@ -51,7 +52,13 @@ const ViewResultsPage = () => {
       field: "examStartTime",
       headerName: "Exam Start Time",
       width: 250,
-      renderCell: (params) => new Date(params.value).toLocaleDateString(),
+      valueFormatter: (params) => {
+        const date = new Date(params);
+        if (isNaN(date.getTime())) {
+          return "Invalid Date";
+        }
+        return format(date, "MM/dd/yyyy, HH:mm");
+      },
     },
     { field: "examDuration", headerName: "Exam Duration", width: 250 },
     {

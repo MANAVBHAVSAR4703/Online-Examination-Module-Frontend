@@ -2,13 +2,12 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Typography, Paper, IconButton, Tooltip } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { OpenInNew } from "@mui/icons-material";
+import { Image, OpenInNew } from "@mui/icons-material";
 
 function ExamResultPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { exam } = location.state;
-
   const columns = [
     { field: "studentEmail", headerName: "Student Email", flex: 1 },
     {
@@ -38,6 +37,27 @@ function ExamResultPage() {
               })
             }>
             <OpenInNew color='success' />
+          </IconButton>
+        </Tooltip>
+      ),
+    },
+    {
+      field: "monitorImages",
+      headerName: "Monitored Images",
+      flex: 0.5,
+      sortable: false,
+      renderCell: (params) => (
+        <Tooltip title='View Monitored Images'>
+          <IconButton
+            onClick={() =>
+              navigate("monitored-images", {
+                state: {
+                  userEmail: params.row.studentEmail,
+                  exam: exam,
+                },
+              })
+            }>
+            <Image color='info' />
           </IconButton>
         </Tooltip>
       ),

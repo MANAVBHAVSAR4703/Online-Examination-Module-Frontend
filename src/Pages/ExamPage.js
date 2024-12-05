@@ -20,10 +20,11 @@ import {
 } from "@mui/icons-material";
 import Loading from "../Components/Loading";
 import axios from "axios";
+import html2canvas from "html2canvas";
 import Cookies from "js-cookie";
 import api from "../Constants/Api";
 import { useSelector } from "react-redux";
-import CodeEditor from "@monaco-editor/react"; 
+import MonacoEditor from "@monaco-editor/react";
 import { useTheme } from "@emotion/react";
 
 const ExamPage = () => {
@@ -38,8 +39,8 @@ const ExamPage = () => {
   const user = useSelector((state) => state.auth.user);
   const [timeOverMessage, setTimeOverMessage] = useState("");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState([]); 
-  const [programmingAnswers, setProgrammingAnswers] = useState([]); 
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
+  const [programmingAnswers, setProgrammingAnswers] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
@@ -87,6 +88,35 @@ const ExamPage = () => {
       return () => clearInterval(timer);
     }
   }, [exam]);
+
+  async function captureScreenshot() {
+    try {
+      const canvas = await html2canvas(document.body);
+      const screenshot = canvas.toDataURL("image/png");
+      return screenshot;
+    } catch (error) {
+      console.error("Error capturing screenshot:", error);
+      return null;
+    }
+  }
+
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      const userEmail = user?.email;
+
+      if (userEmail) {
+        const screenshot = await captureScreenshot();
+        const image = screenshot.split(",")[1];
+        let examId=examID.id;
+        await axios.post(
+          "http://localhost:8080/api/student/monitor",
+          { userEmail, image, examId },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+    }, 60000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   const handleOptionSelect = (optionIndex) => {
     setSelectedAnswers((prevAnswers) => {
@@ -209,7 +239,14 @@ const ExamPage = () => {
                   ].text
                 }`}
           </Typography>
-
+          {exam.questions[currentQuestionIndex]?.imageName && (
+            <img
+              src={`data:${exam.questions[currentQuestionIndex].imageType};base64,${exam.questions[currentQuestionIndex].imageData}`}
+              alt={exam.questions[currentQuestionIndex]?.imageName}
+              height={200}
+              width={300}
+            />
+          )}
           {/* MCQ Options */}
           {currentQuestionIndex < exam.questions.length &&
             exam.questions[currentQuestionIndex].options.map(
@@ -269,7 +306,7 @@ const ExamPage = () => {
                   <MenuItem value='sql'>SQL</MenuItem>
                 </Select>
               </FormControl>
-              <CodeEditor
+              <MonacoEditor
                 height='200px'
                 theme={theme.palette.mode === "dark" ? "vs-dark" : "light"}
                 defaultLanguage={language}
@@ -298,10 +335,8 @@ const ExamPage = () => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "space-around",
             mt: 3,
-            position: "fixed",
-            bottom: "3vh",
             width: "80%",
           }}>
           {currentQuestionIndex < exam.questions.length ? (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -8,7 +8,6 @@ import {
   Radio,
   RadioGroup,
   TextField,
-  Typography,
   Card,
   Grid,
 } from "@mui/material";
@@ -30,13 +29,20 @@ function AddQuestion() {
 
   const [questionText, setQuestionText] = useState(question?.text ?? "");
   const [category, setCategory] = useState(question?.category ?? "Logical");
+  const [difficulty, setDifficulty] = useState(question?.difficulty ?? "EASY");
+  const [imageUpdate, setImageUpdate] = useState(false);
+  const [image, setImage] = useState(
+    question && question.imageData
+      ? `data:${question.imageType};base64,${question.imageData}`
+      : null
+  );
   const [options, setOptions] = useState(
     question?.options?.map((option) => option.text) ?? ["", ""]
   );
   const [correctOptionIndex, setCorrectOptionIndex] = useState(
     question?.correctOptionIndex ?? null
   );
-
+  const fileInputRef = useRef(null);
   const [errors, setErrors] = useState({
     questionText: "",
     options: "",
@@ -58,6 +64,13 @@ function AddQuestion() {
     const updatedOptions = [...options];
     updatedOptions[index] = value;
     setOptions(updatedOptions);
+  };
+
+  const handleRemoveImage = () => {
+    setImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleRemoveOption = (index) => {
@@ -93,6 +106,12 @@ function AddQuestion() {
     return isValid;
   };
 
+  const handleImageChange = (e) => {
+    console.log(e.target.files[0]);
+    setImage(e.target.files[0]);
+    setImageUpdate(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -110,20 +129,30 @@ function AddQuestion() {
             id: question.options[index]?.id,
             text: optionText,
           })),
+          difficulty,
         }
       : {
           text: questionText,
           category,
           correctOptionIndex,
           options,
+          difficulty,
         };
 
+    const formData = new FormData();
+    formData.append("imageFile", image);
+    formData.append(
+      "question",
+      new Blob([JSON.stringify(questionData)], { type: "application/json" })
+    );
+    console.log(formData);
     try {
       const response = await axios.post(
         question ? api.editQuestion : api.AddQuestion,
-        questionData,
+        formData,
         {
           headers: {
+            "Content-Type": "multipart/form-data",
             Authorization: AuthStr,
           },
         }
@@ -268,7 +297,51 @@ function AddQuestion() {
             ))}
           </RadioGroup>
         </FormControl>
-
+        <FormControl fullWidth margin='normal'>
+          <FormLabel>Difficulty</FormLabel>
+          <RadioGroup
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            row
+            required>
+            <FormControlLabel value='EASY' control={<Radio />} label='Easy' />
+            <FormControlLabel
+              value='MEDIUM'
+              control={<Radio />}
+              label='Medium'
+            />
+            <FormControlLabel value='HARD' control={<Radio />} label='Hard' />
+          </RadioGroup>
+        </FormControl>
+        <FormControl fullWidth margin='normal'>
+          <FormLabel>Image</FormLabel>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <input
+              type='file'
+              accept='image/*'
+              onChange={handleImageChange}
+              ref={fileInputRef}
+            />
+            <Button
+              type='button'
+              variant='outlined'
+              color='primary'
+              size='small'
+              onClick={() => handleRemoveImage()}
+              sx={{ fontWeight: "bold" }}>
+              Remove Image
+            </Button>
+          </Box>
+        </FormControl>
+        {image &&
+          (question && !imageUpdate ? (
+            <img src={image} height={100} width={100}></img>
+          ) : (
+            <img
+              src={URL.createObjectURL(image)}
+              height={100}
+              width={100}></img>
+          ))}
         <Button
           type='submit'
           variant='contained'

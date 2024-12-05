@@ -8,6 +8,9 @@ import {
   Typography,
   Card,
   Grid,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -30,6 +33,7 @@ function CreateExam() {
   const [title, setTitle] = useState(exam?.title ?? "");
   const [startTime, setStartTime] = useState(exam?.startTime ?? "");
   const [duration, setDuration] = useState(exam?.duration ?? "");
+  const [difficulty, setDifficulty] = useState(exam?.difficulty ?? "EASY");
   const [passingCriteria, setPassingCriteria] = useState(
     exam?.passingCriteria ?? ""
   );
@@ -177,6 +181,7 @@ function CreateExam() {
         10
       ),
       college,
+      difficulty,
     };
 
     const updateExamData = {
@@ -185,6 +190,7 @@ function CreateExam() {
       startTime,
       duration: parseInt(duration, 10),
       passingCriteria: parseFloat(passingCriteria),
+      difficulty,
     };
 
     try {
@@ -392,7 +398,7 @@ function CreateExam() {
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <FormLabel htmlFor='college'>College</FormLabel>
                   <TextField
@@ -405,6 +411,32 @@ function CreateExam() {
                     variant='outlined'
                     required
                   />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl margin='normal'>
+                  <FormLabel>Difficulty</FormLabel>
+                  <RadioGroup
+                    value={difficulty}
+                    onChange={(e) => setDifficulty(e.target.value)}
+                    row
+                    required>
+                    <FormControlLabel
+                      value='EASY'
+                      control={<Radio />}
+                      label='Easy'
+                    />
+                    <FormControlLabel
+                      value='MEDIUM'
+                      control={<Radio />}
+                      label='Medium'
+                    />
+                    <FormControlLabel
+                      value='HARD'
+                      control={<Radio />}
+                      label='Hard'
+                    />
+                  </RadioGroup>
                 </FormControl>
               </Grid>
             </>

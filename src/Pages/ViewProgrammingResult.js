@@ -65,7 +65,9 @@ const StudentResults = () => {
                         sx={{ fontWeight: "bold" }}>
                         Reference Code
                       </Typography>
-                      <Box>{response?.refCode}</Box>
+                      <pre>
+                        <code>{response?.refCode}</code>
+                      </pre>
                     </Grid>
                   </Grid>
                 </AccordionDetails>

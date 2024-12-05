@@ -50,17 +50,26 @@ function QuestionViewComponent({ questions }) {
   };
 
   return (
-    <Box sx={{ padding: 3,width:"100%", margin: "0 auto" }}>
+    <Box sx={{ padding: 3, width: "100%", margin: "0 auto" }}>
       <ToastContainer />
-      <Typography variant='h4' gutterBottom align='center' fontFamily={"cursive"}>
+      <Typography
+        variant='h4'
+        gutterBottom
+        align='center'
+        fontFamily={"cursive"}>
         Question List
       </Typography>
       {questionList.map((question) => (
         <Accordion key={question.id} sx={{ marginBottom: 2 }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Chip
-              label={question.category}
+              label={question.category.toUpperCase()}
               color={getCategoryColor(question.category)}
+              sx={{ marginRight: 2 }}
+            />
+             <Chip
+              label={question.difficulty}
+              color={getDifficultyColor(question.difficulty)}
               sx={{ marginRight: 2 }}
             />
             <Typography
@@ -88,6 +97,21 @@ function QuestionViewComponent({ questions }) {
           </AccordionSummary>
           <AccordionDetails>
             <Divider sx={{ mb: 2 }} />
+            {question?.imageData && (
+              <>
+                <Typography
+                  variant='subtitle1'
+                  sx={{ mb: 1, color: "text.secondary" }}>
+                  Image :
+                </Typography>
+                <img
+                  src={`data:${question.imageType};base64,${question.imageData}`}
+                  alt={question?.imageName}
+                  height={200}
+                  width={300}
+                />
+              </>
+            )}
             <Typography
               variant='subtitle1'
               sx={{ mb: 1, color: "text.secondary" }}>
@@ -133,6 +157,19 @@ function getCategoryColor(category) {
     case "Programming":
       return "warning";
     case "Technical":
+      return "error";
+    default:
+      return "default";
+  }
+}
+
+function getDifficultyColor(category) {
+  switch (category) {
+    case "EASY":
+      return "success";
+    case "MEDIUM":
+      return "warning";
+    case "HARD":
       return "error";
     default:
       return "default";
