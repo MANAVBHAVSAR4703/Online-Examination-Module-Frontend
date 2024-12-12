@@ -24,7 +24,9 @@ const api = {
     backend_url + "/api/admin/createProgrammingQuestion",
   GetProgrammingQuestions: backend_url + "/api/admin/getProgrammingQuestions",
   editProgrammingQuestion:backend_url+"/api/admin/editProgrammingQuestion",
-  deleteProgrammingQuestion:backend_url+"/api/admin/deleteProgrammingQuestion"
+  deleteProgrammingQuestion:backend_url+"/api/admin/deleteProgrammingQuestion",
+  uploadQuestion:backend_url+"/api/admin/uploadQuestions",
+  uploadStudent:backend_url+"/api/admin/uploadStudents",
 };
 
 export default api;

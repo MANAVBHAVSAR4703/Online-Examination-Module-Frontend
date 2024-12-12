@@ -33,7 +33,7 @@ const StudentResults = () => {
             marginBottom: 2,
           }}>
           {programmingResponses?.length > 0 ? (
-            programmingResponses.map((response, idx) => (
+            programmingResponses?.map((response, idx) => (
               <Accordion key={idx} sx={{ marginBottom: 2 }}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}

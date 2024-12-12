@@ -16,7 +16,9 @@ import api from "../Constants/Api";
 import Cookies from "js-cookie";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-
+function capitalizeFirstLetter(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1).toLowerCase();
+}
 function AddQuestion() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ function AddQuestion() {
   let AuthStr = `Bearer ${token}`;
 
   const [questionText, setQuestionText] = useState(question?.text ?? "");
-  const [category, setCategory] = useState(question?.category ?? "Logical");
+  const [category, setCategory] = useState(capitalizeFirstLetter(question?.category) ?? "Logical");
   const [difficulty, setDifficulty] = useState(question?.difficulty ?? "EASY");
   const [imageUpdate, setImageUpdate] = useState(false);
   const [image, setImage] = useState(
@@ -123,9 +125,9 @@ function AddQuestion() {
       ? {
           id: question.id,
           text: questionText,
-          category,
+          category: category.toUpperCase(),
           correctOptionIndex,
-          options: options.map((optionText, index) => ({
+          options: options?.map((optionText, index) => ({
             id: question.options[index]?.id,
             text: optionText,
           })),
@@ -133,7 +135,7 @@ function AddQuestion() {
         }
       : {
           text: questionText,
-          category,
+          category: category.toUpperCase(),
           correctOptionIndex,
           options,
           difficulty,
@@ -242,7 +244,7 @@ function AddQuestion() {
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth margin='normal'>
               <FormLabel>Options</FormLabel>
-              {options.map((option, index) => (
+              {options?.map((option, index) => (
                 <Box key={index} display='flex' alignItems='center' mb={1}>
                   <TextField
                     value={option}
@@ -287,7 +289,7 @@ function AddQuestion() {
             onChange={(e) => setCorrectOptionIndex(parseInt(e.target.value))}
             error={!!errors.correctOption}
             helperText={errors.correctOption}>
-            {options.map((_, index) => (
+            {options?.map((_, index) => (
               <FormControlLabel
                 key={index}
                 value={index}

@@ -82,7 +82,7 @@ export default function MenuContent() {
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
       <List dense>
-        {mainListItems.map((item, index) => (
+        {mainListItems?.map((item, index) => (
           <>
             {" "}
             {item?.chip && (
@@ -108,7 +108,7 @@ export default function MenuContent() {
       </List>
 
       <List dense>
-        {secondaryListItems.map((item, index) => (
+        {secondaryListItems?.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: "block" }}>
             <ListItemButton>
               <ListItemIcon>{item.icon}</ListItemIcon>

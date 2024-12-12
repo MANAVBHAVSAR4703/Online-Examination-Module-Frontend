@@ -57,7 +57,7 @@ function StudentExamsView() {
       ) : enrolledExams.length > 0 ? (
         <Paper elevation={3} sx={{ p: 2 }}>
           <List>
-            {enrolledExams.map((exam) => (
+            {enrolledExams?.map((exam) => (
               <ListItem key={exam.id} divider>
                 <ListItemText
                   primary={exam.title}

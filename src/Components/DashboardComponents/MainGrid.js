@@ -52,25 +52,25 @@ export default function MainGrid() {
   const data = [
     {
       title: "Students",
-      value: overview.studentCount,
+      value: overview?.studentCount??0,
       icon: <PersonOutline />,
     },
     {
       title: "Exams",
-      value: overview.examCount,
+      value: overview?.examCount??0,
       icon: <ArticleOutlined />,
     },
     {
       title: "Questions",
       value:
-        overview.programmingQuestionsCount +
-        overview.technicalQuestionsCount +
-        overview.logicalQuestionsCount,
+        (overview?.programmingQuestionsCount +
+        overview?.technicalQuestionsCount+
+        overview?.logicalQuestionsCount),
       icon: <QuizOutlined />,
     },
     {
       title: "Colleges",
-      value: overview.collegesCount,
+      value: overview?.collegesCount??0,
       icon: <SchoolOutlined />,
     },
   ];
@@ -91,7 +91,7 @@ export default function MainGrid() {
       </Typography>
 
       <Grid container spacing={4} justifyContent='center'>
-        {data.map((item, index) => (
+        {data?.map((item, index) => (
           <Grid
             item
             xs={12} 
@@ -114,21 +114,21 @@ export default function MainGrid() {
         <Grid item xs={12} sm={6} md={3} key={"programmingQuestionsCount"}>
           <StatCard
             title={"Programming Questions"}
-            value={overview?.programmingQuestionsCount}
+            value={overview?.programmingQuestionsCount??0}
             icon={<Computer />}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3} key={"technicalQuestionsCount"}>
           <StatCard
             title={"Technical Questions"}
-            value={overview?.technicalQuestionsCount}
+            value={overview?.technicalQuestionsCount??0}
             icon={<TungstenOutlined />}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3} key={"logicalQuestionsCount"}>
           <StatCard
             title={"Logical Questions"}
-            value={overview?.logicalQuestionsCount}
+            value={overview?.logicalQuestionsCount??0}
             icon={<PsychologyOutlinedIcon />}
           />
         </Grid>

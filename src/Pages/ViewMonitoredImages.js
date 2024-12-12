@@ -54,7 +54,7 @@ function ViewMonitoredImages() {
       </h2>
       {images.length > 0 ? (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-          {images.map((data, index) => (
+          {images?.map((data, index) => (
             <div
               key={index}
               style={{

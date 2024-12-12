@@ -63,7 +63,7 @@ function ProgrammingQuestionViewComponent({ questions }) {
         Programming Question List
       </Typography>
       {questionsList.length > 0 ? (
-        questionsList.map((question) => (
+        questionsList?.map((question) => (
           <Accordion
             key={question.id}
             sx={{ mb: 2, borderRadius: 2, boxShadow: 3 }}>

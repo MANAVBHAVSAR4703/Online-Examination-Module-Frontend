@@ -94,7 +94,7 @@ export default function ExamDetails() {
             Instructions
           </Typography>
           <List>
-            {instructions.map((instruction, index) => (
+            {instructions?.map((instruction, index) => (
               <ListItem key={index}>
                 <ListItemText primary={`${index + 1}) ${instruction}`} />
               </ListItem>

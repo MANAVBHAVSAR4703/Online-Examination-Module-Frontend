@@ -154,13 +154,13 @@ const ExamPage = () => {
   };
 
   const handleSubmitExam = async () => {
-    const responses = exam.questions.map((question, index) => ({
+    const responses = exam.questions?.map((question, index) => ({
       questionId: question.id,
       selectedOption:
         selectedAnswers[index] !== undefined ? selectedAnswers[index] : null,
     }));
 
-    const programmingQuestionResponses = exam.programmingQuestions.map(
+    const programmingQuestionResponses = exam.programmingQuestions?.map(
       (question, index) => ({
         questionId: question.id,
         refCode: programmingAnswers[index] || "",
@@ -249,7 +249,7 @@ const ExamPage = () => {
           )}
           {/* MCQ Options */}
           {currentQuestionIndex < exam.questions.length &&
-            exam.questions[currentQuestionIndex].options.map(
+            exam.questions[currentQuestionIndex].options?.map(
               (option, index) => (
                 <Button
                   key={option.id}
@@ -480,7 +480,7 @@ const ExamPage = () => {
               <Chip icon={<QuestionAnswer />} label='MCQs' variant='outlined' />
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-              {exam.questions.map((_, index) => (
+              {exam.questions?.map((_, index) => (
                 <Tooltip title={`Go to MCQ ${index + 1}`} key={index}>
                   <Box
                     onClick={() => handleQuestionSelect(index)}
@@ -530,7 +530,7 @@ const ExamPage = () => {
               />
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-              {exam.programmingQuestions.map((_, index) => {
+              {exam.programmingQuestions?.map((_, index) => {
                 const programmingIndex = index + exam.questions.length;
                 return (
                   <Tooltip

@@ -59,7 +59,7 @@ function QuestionViewComponent({ questions }) {
         fontFamily={"cursive"}>
         Question List
       </Typography>
-      {questionList.map((question) => (
+      {questionList?.map((question) => (
         <Accordion key={question.id} sx={{ marginBottom: 2 }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Chip
@@ -67,7 +67,7 @@ function QuestionViewComponent({ questions }) {
               color={getCategoryColor(question.category)}
               sx={{ marginRight: 2 }}
             />
-             <Chip
+            <Chip
               label={question.difficulty}
               color={getDifficultyColor(question.difficulty)}
               sx={{ marginRight: 2 }}
@@ -152,11 +152,11 @@ function QuestionViewComponent({ questions }) {
 
 function getCategoryColor(category) {
   switch (category) {
-    case "Logical":
+    case "LOGICAL":
       return "success";
-    case "Programming":
+    case "PROGRAMMING":
       return "warning";
-    case "Technical":
+    case "TECHNICAL":
       return "error";
     default:
       return "default";
