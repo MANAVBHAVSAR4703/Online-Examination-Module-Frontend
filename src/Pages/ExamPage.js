@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -89,6 +89,44 @@ const ExamPage = () => {
     }
   }, [exam]);
 
+  const isFirstRun = useRef(true);
+  useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+
+      const savedState = localStorage.getItem(
+        `examState_${examID.id}_${user.email}`
+      );
+      if (savedState) {
+        const { currentQuestionIndex, selectedAnswers, programmingAnswers } =
+          JSON.parse(savedState);
+        setCurrentQuestionIndex(currentQuestionIndex || 0);
+        setSelectedAnswers(selectedAnswers || []);
+        setProgrammingAnswers(programmingAnswers || []);
+      }
+    }
+  }, [examID.id, user.email]);
+
+  useEffect(() => {
+    const saveExamState = () => {
+      const examState = {
+        currentQuestionIndex,
+        selectedAnswers,
+        programmingAnswers,
+      };
+      localStorage.setItem(
+        `examState_${examID.id}_${user.email}`,
+        JSON.stringify(examState)
+      );
+    };
+
+    saveExamState();
+
+    const intervalId = setInterval(saveExamState, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [currentQuestionIndex, selectedAnswers, programmingAnswers, timeLeft]);
+
   async function captureScreenshot() {
     try {
       const canvas = await html2canvas(document.body);
@@ -107,7 +145,7 @@ const ExamPage = () => {
       if (userEmail) {
         const screenshot = await captureScreenshot();
         const image = screenshot.split(",")[1];
-        let examId=examID.id;
+        let examId = examID.id;
         await axios.post(
           "http://localhost:8080/api/student/monitor",
           { userEmail, image, examId },
@@ -488,13 +526,13 @@ const ExamPage = () => {
                       backgroundColor:
                         currentQuestionIndex === index
                           ? "primary.main"
-                          : selectedAnswers[index] !== undefined
+                          : selectedAnswers[index]
                           ? "success.main"
                           : "#f0f0f0",
                       color:
                         currentQuestionIndex === index
                           ? "black"
-                          : selectedAnswers[index] !== undefined
+                          : selectedAnswers[index]
                           ? "white"
                           : "black",
                       width: "40px",
@@ -508,7 +546,7 @@ const ExamPage = () => {
                         backgroundColor:
                           currentQuestionIndex === index
                             ? "primary.dark"
-                            : selectedAnswers[index] !== undefined
+                            : selectedAnswers[index]
                             ? "success.dark"
                             : "#e0e0e0",
                       },
@@ -548,7 +586,7 @@ const ExamPage = () => {
                         color:
                           currentQuestionIndex === index
                             ? "black"
-                            : selectedAnswers[index] !== undefined
+                            : selectedAnswers[index]
                             ? "white"
                             : "black",
                         width: "40px",
