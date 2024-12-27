@@ -27,6 +27,8 @@ const api = {
   deleteProgrammingQuestion:backend_url+"/api/admin/deleteProgrammingQuestion",
   uploadQuestion:backend_url+"/api/admin/uploadQuestions",
   uploadStudent:backend_url+"/api/admin/uploadStudents",
+  capturedImagesApi:backend_url+"/api/student/capture",
+  montiorImagesApi:backend_url+"/api/student/monitor"
 };
 
 export default api;

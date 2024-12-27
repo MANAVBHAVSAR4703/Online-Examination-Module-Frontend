@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Webcam from "react-webcam";
 import {
   Box,
   Typography,
@@ -42,6 +43,41 @@ const ExamPage = () => {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [programmingAnswers, setProgrammingAnswers] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
+  const webcamRef = useRef(null);
+  const [capturing, setCapturing] = useState(true);
+
+  const captureImage = async () => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (imageSrc) {
+        await sendImageToApi(imageSrc);
+      }
+    }
+  };
+
+  const sendImageToApi = async (imageSrc) => {
+    try {
+      const userEmail = user?.email;
+      let examId = examID.id;
+      const response = await axios.post(
+        api.capturedImagesApi,
+        { userEmail, imageSrc, examId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("Image sent successfully:", response.data);
+    } catch (error) {
+      console.error("Error sending image:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (capturing) {
+      const interval = setInterval(() => {
+        captureImage();
+      }, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [capturing]);
 
   useEffect(() => {
     if (!token) {
@@ -64,6 +100,13 @@ const ExamPage = () => {
 
     fetchExamById();
   }, [token, navigate, examID.id]);
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+  }, []);
 
   useEffect(() => {
     if (exam) {
@@ -141,13 +184,12 @@ const ExamPage = () => {
   useEffect(() => {
     const intervalId = setInterval(async () => {
       const userEmail = user?.email;
-
       if (userEmail) {
         const screenshot = await captureScreenshot();
         const image = screenshot.split(",")[1];
         let examId = examID.id;
         await axios.post(
-          "http://localhost:8080/api/student/monitor",
+          api.montiorImagesApi,
           { userEmail, image, examId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -234,14 +276,35 @@ const ExamPage = () => {
         flexDirection: "row",
         p: 3,
         backgroundColor: "#f7f9fc",
+        height: "91vh",
+        overflow: "hidden",
       }}>
-      <Box sx={{ flex: 1, p: 2 }}>
+      <Box sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column" }}>
         <Typography
           variant='h3'
+          class='header'
           gutterBottom
           sx={{ textAlign: "center", fontWeight: "bold", mb: 2 }}>
           {exam.title}
         </Typography>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "100px",
+            left: "10px",
+            zIndex: 10,
+            border: "2px solid black",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+            borderRadius: "8px",
+            overflow: "hidden",
+          }}>
+          <Webcam
+            audio={false}
+            ref={webcamRef}
+            screenshotFormat='image/jpeg'
+            style={{ width: "200px", height: "150px" }}
+          />
+        </Box>
         <Typography
           variant='h6'
           sx={{ textAlign: "center", fontSize: "1.2rem", mb: 3 }}>
@@ -261,6 +324,8 @@ const ExamPage = () => {
           elevation={4}
           sx={{
             p: 3,
+            flex: 1,
+            overflowY: "auto",
             my: 3,
             borderRadius: "16px",
             backgroundColor: "#ffffff",
@@ -285,7 +350,6 @@ const ExamPage = () => {
               width={300}
             />
           )}
-          {/* MCQ Options */}
           {currentQuestionIndex < exam.questions.length &&
             exam.questions[currentQuestionIndex].options?.map(
               (option, index) => (
@@ -327,7 +391,6 @@ const ExamPage = () => {
               )
             )}
 
-          {/* Programming Question */}
           {currentQuestionIndex >= exam.questions.length && (
             <>
               <FormControl size='small' sx={{ mb: 2, width: "150px" }}>
@@ -368,14 +431,17 @@ const ExamPage = () => {
           )}
         </Paper>
 
-        {/* Navigation Buttons */}
-        {/* Navigation Buttons for MCQs and Programming */}
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-around",
-            mt: 3,
-            width: "80%",
+            justifyContent: "space-between",
+            mt: 2,
+            position: "sticky",
+            bottom: "40px",
+            zIndex: 5,
+            backgroundColor: "#f7f9fc",
+            padding: "10px 20px",
+            borderTop: "2px solid #e0e0e0",
           }}>
           {currentQuestionIndex < exam.questions.length ? (
             <>
@@ -457,19 +523,20 @@ const ExamPage = () => {
         </Box>
       </Box>
 
-      {/* Right-Side Navigation with Legend */}
       <Box
         sx={{
-          width: "250px",
+          width: "300px",
+          height: "300px",
           ml: 4,
           p: 2,
           backgroundColor: "#ffffff",
           borderRadius: "16px",
           boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          height: "calc(100vh - 60px)",
+          overflowY: "auto",
           position: "sticky",
-          top: "80px",
+          top: "30px",
         }}>
-        {/* Legend */}
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <Box
@@ -509,10 +576,7 @@ const ExamPage = () => {
           </Box>
         </Box>
 
-        {/* Question Navigation */}
-        {/* Question Navigation */}
         <Box>
-          {/* MCQ Navigation */}
           <Box sx={{ mb: 4 }}>
             <Typography variant='h6' sx={{ mb: 2 }}>
               <Chip icon={<QuestionAnswer />} label='MCQs' variant='outlined' />
@@ -558,7 +622,6 @@ const ExamPage = () => {
             </Box>
           </Box>
 
-          {/* Programming Questions Navigation */}
           <Box>
             <Typography variant='h6' sx={{ mb: 2 }}>
               <Chip
@@ -568,48 +631,47 @@ const ExamPage = () => {
               />
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-              {exam.programmingQuestions?.map((_, index) => {
-                const programmingIndex = index + exam.questions.length;
-                return (
-                  <Tooltip
-                    title={`Go to Programming Question ${index + 1}`}
-                    key={programmingIndex}>
-                    <Box
-                      onClick={() => handleQuestionSelect(programmingIndex)}
-                      sx={{
+              {exam.programmingQuestions?.map((_, index) => (
+                <Tooltip
+                  title={`Go to Programming Question ${index + 1}`}
+                  key={index}>
+                  <Box
+                    onClick={() =>
+                      handleQuestionSelect(index + exam.questions.length)
+                    }
+                    sx={{
+                      backgroundColor:
+                        currentQuestionIndex === index + exam.questions.length
+                          ? "primary.main"
+                          : programmingAnswers[index]
+                          ? "success.main"
+                          : "#f0f0f0",
+                      color:
+                        currentQuestionIndex === index + exam.questions.length
+                          ? "black"
+                          : programmingAnswers[index]
+                          ? "white"
+                          : "black",
+                      width: "40px",
+                      height: "40px",
+                      lineHeight: "40px",
+                      textAlign: "center",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      fontWeight: "bold",
+                      "&:hover": {
                         backgroundColor:
-                          currentQuestionIndex === programmingIndex
-                            ? "primary.main"
+                          currentQuestionIndex === index + exam.questions.length
+                            ? "primary.dark"
                             : programmingAnswers[index]
-                            ? "success.main"
-                            : "#f0f0f0",
-                        color:
-                          currentQuestionIndex === index
-                            ? "black"
-                            : selectedAnswers[index]
-                            ? "white"
-                            : "black",
-                        width: "40px",
-                        height: "40px",
-                        lineHeight: "40px",
-                        textAlign: "center",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                        "&:hover": {
-                          backgroundColor:
-                            currentQuestionIndex === programmingIndex
-                              ? "primary.dark"
-                              : programmingAnswers[index]
-                              ? "success.dark"
-                              : "#e0e0e0",
-                        },
-                      }}>
-                      {index + 1}
-                    </Box>
-                  </Tooltip>
-                );
-              })}
+                            ? "success.dark"
+                            : "#e0e0e0",
+                      },
+                    }}>
+                    {index + 1}
+                  </Box>
+                </Tooltip>
+              ))}
             </Box>
           </Box>
         </Box>
