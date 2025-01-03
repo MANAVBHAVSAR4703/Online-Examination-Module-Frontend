@@ -66,10 +66,22 @@ export default function SignIn(props) {
   const [emailError, setEmailError] = React.useState("");
   const [passwordError, setPasswordError] = React.useState("");
   const [message, setMessage] = React.useState("");
+  const [ipAddress, setIpAddress] = React.useState("");
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    axios
+      .get("https://api.ipify.org?format=json")
+      .then((response) => {
+        setIpAddress(response.data.ip);
+      })
+      .catch((error) => {
+        console.error("Error fetching IP address:", error);
+      });
+  }, []);
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -81,9 +93,17 @@ export default function SignIn(props) {
     event.preventDefault();
     if (!validateInputs()) return;
 
+    const userAgent = navigator.userAgent;
+
     try {
       const response = await axios.post(`${api.Login}`, { email, password });
       const { token, success, message } = response.data;
+      await axios.post(api.SaveloginAttempt, {
+        email,
+        IpAddress: ipAddress,
+        userAgent: userAgent,
+        success,
+      });
       if (success) {
         dispatch(setUser(response.data));
         Cookies.set("token", token);
@@ -94,6 +114,16 @@ export default function SignIn(props) {
       }
     } catch (error) {
       setMessage(error?.response?.data?.message || "Something went wrong");
+      try {
+        await axios.post(api.SaveloginAttempt, {
+          email,
+          IpAddress: ipAddress,
+          userAgent: userAgent,
+          success: false,
+        });
+      } catch (innerError) {
+        console.error("Error saving login attempt:", innerError);
+      }
     }
   };
 

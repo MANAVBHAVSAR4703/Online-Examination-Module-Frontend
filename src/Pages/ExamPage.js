@@ -12,6 +12,9 @@ import {
   MenuItem,
   Tooltip,
   Chip,
+  Snackbar,
+  Alert,
+  Modal,
 } from "@mui/material";
 import {
   ArrowForward,
@@ -45,12 +48,24 @@ const ExamPage = () => {
   const [timeLeft, setTimeLeft] = useState(0);
   const webcamRef = useRef(null);
   const [capturing, setCapturing] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  const handleOpenAlert = () => {
+    setOpen(true);
+  };
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const captureImage = async () => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
       if (imageSrc) {
-        await sendImageToApi(imageSrc);
+        await sendImageToApi(imageSrc.split(",")[1]);
       }
     }
   };
@@ -61,7 +76,7 @@ const ExamPage = () => {
       let examId = examID.id;
       const response = await axios.post(
         api.capturedImagesApi,
-        { userEmail, imageSrc, examId },
+        { userEmail, image: imageSrc, examId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log("Image sent successfully:", response.data);
@@ -106,6 +121,44 @@ const ExamPage = () => {
       navigate("/login");
       return;
     }
+
+    const handleKeyDown = (event) => {
+      if (
+        event.keyCode == 17 ||
+        event.keyCode == 9 ||
+        event.keyCode == 18 ||
+        event.keyCode == 16 ||
+        event.keyCode == 16 ||
+        event.keyCode == 91 ||
+        event.keyCode == 92 ||
+        event.keyCode == 93
+      ) {
+        handleOpenAlert();
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const message =
+        "Are you sure you want to leave? Unsaved changes may be lost.";
+      event.preventDefault();
+      event.returnValue = message;
+      return message;
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, []);
 
   useEffect(() => {
@@ -151,7 +204,7 @@ const ExamPage = () => {
   }, [examID.id, user.email]);
 
   useEffect(() => {
-    const saveExamState = () => {
+    const saveExamState = async () => {
       const examState = {
         currentQuestionIndex,
         selectedAnswers,
@@ -161,6 +214,21 @@ const ExamPage = () => {
         `examState_${examID.id}_${user.email}`,
         JSON.stringify(examState)
       );
+      try {
+        // await axios.post(
+        //   api.saveExamResponse,
+        //   {
+        //     examId: examID.id,
+        //     userEmail: user.email,
+        //     currentQuestionIndex: currentQuestionIndex,
+        //     selectedAnswers: selectedAnswers,
+        //     programmingAnswers: programmingAnswers,
+        //   },
+        //   { headers: { Authorization: `Bearer ${token}` } }
+        // );
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     saveExamState();
@@ -279,6 +347,15 @@ const ExamPage = () => {
         height: "91vh",
         overflow: "hidden",
       }}>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleCloseAlert}>
+        <Alert
+          onClose={handleCloseAlert}
+          severity='warning'
+          variant='filled'
+          sx={{ width: "100%" }}>
+          Avoid using Ctrl, Shift, Tab, Alt, Windows key !!
+        </Alert>
+      </Snackbar>
       <Box sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column" }}>
         <Typography
           variant='h3'
@@ -522,17 +599,15 @@ const ExamPage = () => {
           </Button>
         </Box>
       </Box>
-
       <Box
         sx={{
           width: "300px",
-          height: "300px",
+          height: "calc(100vh - 60px)",
           ml: 4,
           p: 2,
           backgroundColor: "#ffffff",
           borderRadius: "16px",
           boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-          height: "calc(100vh - 60px)",
           overflowY: "auto",
           position: "sticky",
           top: "30px",

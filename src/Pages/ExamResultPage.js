@@ -62,6 +62,27 @@ function ExamResultPage() {
         </Tooltip>
       ),
     },
+    {
+      field: "capturedImages",
+      headerName: "captured Images",
+      flex: 0.5,
+      sortable: false,
+      renderCell: (params) => (
+        <Tooltip title='View Captured Images'>
+          <IconButton
+            onClick={() =>
+              navigate("captured-images", {
+                state: {
+                  userEmail: params.row.studentEmail,
+                  exam: exam,
+                },
+              })
+            }>
+            <Image color='info' />
+          </IconButton>
+        </Tooltip>
+      ),
+    },
   ];
 
   const rows = exam?.studentResults?.map((student, index) => ({

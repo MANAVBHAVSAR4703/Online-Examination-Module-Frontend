@@ -23,12 +23,15 @@ const api = {
   createProgrammingQuestion:
     backend_url + "/api/admin/createProgrammingQuestion",
   GetProgrammingQuestions: backend_url + "/api/admin/getProgrammingQuestions",
-  editProgrammingQuestion:backend_url+"/api/admin/editProgrammingQuestion",
-  deleteProgrammingQuestion:backend_url+"/api/admin/deleteProgrammingQuestion",
-  uploadQuestion:backend_url+"/api/admin/uploadQuestions",
-  uploadStudent:backend_url+"/api/admin/uploadStudents",
-  capturedImagesApi:backend_url+"/api/student/capture",
-  montiorImagesApi:backend_url+"/api/student/monitor"
+  editProgrammingQuestion: backend_url + "/api/admin/editProgrammingQuestion",
+  deleteProgrammingQuestion:
+    backend_url + "/api/admin/deleteProgrammingQuestion",
+  uploadQuestion: backend_url + "/api/admin/uploadQuestions",
+  uploadStudent: backend_url + "/api/admin/uploadStudents",
+  capturedImagesApi: backend_url + "/api/student/capture",
+  montiorImagesApi: backend_url + "/api/student/monitor",
+  saveExamResponse: backend_url + "/api/student/saveExamResponse",
+  SaveloginAttempt: backend_url + "/api/auth/login-attempts",
 };
 
 export default api;
