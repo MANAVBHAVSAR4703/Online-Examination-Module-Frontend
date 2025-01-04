@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, Avatar, Typography, Button, Paper } from "@mui/material";
 import { styled } from "@mui/system";
-import { useSelector } from "react-redux"; // Import useSelector from react-redux
+import { useSelector } from "react-redux";
 
 const ProfileContainer = styled(Paper)(({ theme }) => ({
   display: "flex",
@@ -76,16 +76,33 @@ const Profile = () => {
         sx={{ fontWeight: "bold", px: 3, pt: 3 }}>
         {user?.fullName.toUpperCase()}
       </Typography>
-      
+
       <Typography
         variant='body2'
         sx={{ fontWeight: "bold", color: "text.secondary", mb: 3 }}>
         {user?.email}
       </Typography>
 
-      <Button variant='outlined' color='primary' fullWidth>
-        Edit Profile
-      </Button>
+      {user?.enrollNo && (
+        <>
+          <Typography
+            variant='body1'
+            sx={{ fontWeight: "bold"}}>
+            Enrollment Number : {user?.enrollNo}
+          </Typography>
+          <Typography
+            variant='body1'
+            sx={{ fontWeight: "bold"}}>
+            College : {user?.college}
+          </Typography>
+        </>
+      )}
+
+      {!user?.enrollNo && (
+        <Button variant='outlined' color='primary' fullWidth>
+          Edit Profile
+        </Button>
+      )}
     </ProfileContainer>
   );
 };

@@ -122,6 +122,11 @@ const ExamPage = () => {
       return;
     }
 
+    if(!examID){
+      navigate("/404");
+      return;
+    }
+
     const handleKeyDown = (event) => {
       if (
         event.keyCode == 17 ||
@@ -215,17 +220,17 @@ const ExamPage = () => {
         JSON.stringify(examState)
       );
       try {
-        // await axios.post(
-        //   api.saveExamResponse,
-        //   {
-        //     examId: examID.id,
-        //     userEmail: user.email,
-        //     currentQuestionIndex: currentQuestionIndex,
-        //     selectedAnswers: selectedAnswers,
-        //     programmingAnswers: programmingAnswers,
-        //   },
-        //   { headers: { Authorization: `Bearer ${token}` } }
-        // );
+        await axios.post(
+          api.saveExamResponse,
+          {
+            examId: examID.id,
+            userEmail: user.email,
+            currentQuestionIndex: currentQuestionIndex,
+            selectedAnswers: selectedAnswers,
+            programmingAnswers: programmingAnswers,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
       } catch (err) {
         console.log(err);
       }
@@ -269,7 +274,11 @@ const ExamPage = () => {
   const handleOptionSelect = (optionIndex) => {
     setSelectedAnswers((prevAnswers) => {
       const newAnswers = [...prevAnswers];
-      newAnswers[currentQuestionIndex] = optionIndex;
+      if (newAnswers[currentQuestionIndex] !== optionIndex) {
+        newAnswers[currentQuestionIndex] = optionIndex;
+      } else {
+        newAnswers[currentQuestionIndex] = null;
+      }
       return newAnswers;
     });
   };
@@ -343,7 +352,6 @@ const ExamPage = () => {
         display: "flex",
         flexDirection: "row",
         p: 3,
-        backgroundColor: "#f7f9fc",
         height: "91vh",
         overflow: "hidden",
       }}>
@@ -405,7 +413,6 @@ const ExamPage = () => {
             overflowY: "auto",
             my: 3,
             borderRadius: "16px",
-            backgroundColor: "#ffffff",
             boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
           }}>
           <Typography variant='h5' sx={{ fontWeight: "bold", mb: 2 }}>
@@ -487,13 +494,13 @@ const ExamPage = () => {
               <MonacoEditor
                 height='200px'
                 theme={theme.palette.mode === "dark" ? "vs-dark" : "light"}
-                defaultLanguage={language}
+                language={language}
                 value={
                   programmingAnswers[
                     currentQuestionIndex - exam.questions.length
                   ] || ""
                 }
-                onChange={handleCodeChange}
+                onChange={(value) => handleCodeChange(value)}
                 options={{
                   minimap: { enabled: false },
                   fontSize: 14,
@@ -516,7 +523,6 @@ const ExamPage = () => {
             position: "sticky",
             bottom: "40px",
             zIndex: 5,
-            backgroundColor: "#f7f9fc",
             padding: "10px 20px",
             borderTop: "2px solid #e0e0e0",
           }}>
@@ -605,9 +611,8 @@ const ExamPage = () => {
           height: "calc(100vh - 60px)",
           ml: 4,
           p: 2,
-          backgroundColor: "#ffffff",
           borderRadius: "16px",
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          boxShadow: theme.palette.mode === "dark"?"0px 4px 12px rgba(255, 255, 255, 0.1)":"0px 4px 12px rgba(0, 0, 0, 0.1)",
           overflowY: "auto",
           position: "sticky",
           top: "30px",
@@ -665,13 +670,19 @@ const ExamPage = () => {
                       backgroundColor:
                         currentQuestionIndex === index
                           ? "primary.main"
-                          : selectedAnswers[index]
+                          : selectedAnswers[index] === 0 ||
+                            selectedAnswers[index] === 1 ||
+                            selectedAnswers[index] === 2 ||
+                            selectedAnswers[index] === 3
                           ? "success.main"
                           : "#f0f0f0",
                       color:
                         currentQuestionIndex === index
                           ? "black"
-                          : selectedAnswers[index]
+                          : selectedAnswers[index] === 0 ||
+                            selectedAnswers[index] === 1 ||
+                            selectedAnswers[index] === 2 ||
+                            selectedAnswers[index] === 3
                           ? "white"
                           : "black",
                       width: "40px",
@@ -685,7 +696,10 @@ const ExamPage = () => {
                         backgroundColor:
                           currentQuestionIndex === index
                             ? "primary.dark"
-                            : selectedAnswers[index]
+                            : selectedAnswers[index] === 0 ||
+                              selectedAnswers[index] === 1 ||
+                              selectedAnswers[index] === 2 ||
+                              selectedAnswers[index] === 3
                             ? "success.dark"
                             : "#e0e0e0",
                       },

@@ -70,9 +70,9 @@ const mainListItems = [
 ];
 
 const secondaryListItems = [
-  { text: "Settings", icon: <SettingsRoundedIcon /> },
-  { text: "About", icon: <InfoRoundedIcon /> },
-  { text: "Feedback", icon: <HelpRoundedIcon /> },
+  // { text: "Settings", icon: <SettingsRoundedIcon /> },
+  // { text: "About", icon: <InfoRoundedIcon /> },
+  // { text: "Feedback", icon: <HelpRoundedIcon /> },
 ];
 
 export default function MenuContent() {

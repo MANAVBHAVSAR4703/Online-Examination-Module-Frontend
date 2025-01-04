@@ -47,6 +47,17 @@ function StudentExamsView() {
     fetchEnrolledExams();
   }, [token, navigate]);
 
+  useEffect(() => {
+    window.history.pushState(null, null, window.location.href);
+    const handlePopState = () => {
+      window.history.go(1);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
   return (
     <Container sx={{ my: 4, flex: 1 }}>
       <Typography variant='h4' gutterBottom>
